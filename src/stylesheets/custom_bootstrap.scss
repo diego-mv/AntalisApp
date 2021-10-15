@@ -1,0 +1,15 @@
+$theme-colors: (
+    "primary": #F50C7D,
+    "secondary": #0F034E,
+    "success": #1bc123,
+    "danger": #c9192b,
+    "warning": #FFC107,
+    "info": #12aac2,
+    "dark": #1c1e20
+);
+
+.btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-info, .btn-dark {
+    @extend .text-white
+}
+
+@import "../../node_modules/bootstrap/scss/bootstrap";

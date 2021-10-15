@@ -1,0 +1,37 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.vh-100 {
+  height: 100vh;
+}
+
+.bg-lightgray {
+  background-color: lightgray;
+}
+
+.form-control:focus {
+  border-color: #F50C7D;
+  box-shadow: 0 0 0 0.2rem rgba(245, 12, 125, 0.25);
+} 
+
+.custom-shadow {
+  -webkit-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.2);
+	box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.2);
+}
+
+#login-card {
+  width: 60vw;
+  -webkit-box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.2);
+	box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.2);
+}
