@@ -10,6 +10,35 @@ $theme-colors: (
 
 .btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-info, .btn-dark {
     @extend .text-white
-}
+};
+
+.alert {
+    @extend .text-white;
+    border: none !important;
+};
+
+.alert-primary {
+    @extend .bg-primary
+};
+
+.alert-secondary {
+    @extend .bg-secondary
+};
+
+.alert-info {
+    @extend .bg-info
+};
+
+.alert-success {
+    @extend .bg-success
+};
+
+.alert-warning {
+    @extend .bg-warning
+};
+
+.alert-danger {
+    @extend .bg-danger
+};
 
 @import "../../node_modules/bootstrap/scss/bootstrap";
