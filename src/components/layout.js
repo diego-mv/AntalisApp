@@ -1,14 +1,35 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import '../stylesheets/sb-admin/styles.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faUser, faUserCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { Dropdown } from 'react-bootstrap';
 import brand from '../img/antalis-brand-white.png';
 import { ValidateToken } from './backend';
+import { useHistory } from 'react-router';
+import Loading from './loading';
+import Cookies from 'universal-cookie';
+import LoggedAs from './layout/logged_as';
 
-const Layout = ({ content }) => {
-    ValidateToken();
+const Layout = () => {
+    const history = useHistory();
+    const [loading, setLoading] = useState(true);
+    const cookies = new Cookies();
+
+    useEffect(() => {
+        const checkSession = async () => {
+            const valid_token = await ValidateToken(cookies.get('session_jwt'));
+            valid_token ? setLoading(false) : history.push('/');
+        }
+        checkSession();
+    }, []);
+
+    return loading ? <Loading /> : <LayoutPage />
+}
+
+const LayoutPage = ({ content }) => {
     const layout_wrapper = useRef();
+    const cookies = new Cookies();
+    const history = useHistory();
 
     const sidebarToggle = e => {
         e.preventDefault();
@@ -21,6 +42,11 @@ const Layout = ({ content }) => {
             layout_wrapper.current.classList.toggle('sb-sidenav-toggled');
         }
     });
+
+    const handleLogout = () => {
+        cookies.remove('session_jwt');
+        history.push('/');
+    }
 
     return (
         <div className="vh-100 sb-nav-fixed" ref={layout_wrapper}>
@@ -39,8 +65,14 @@ const Layout = ({ content }) => {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item>Settings</Dropdown.Item>
-                        <Dropdown.Item>Logout</Dropdown.Item>
+                        <Dropdown.Item>
+                            <FontAwesomeIcon icon={faUserCog} className="me-1" />
+                            Configuración de cuenta
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={handleLogout}>
+                            <FontAwesomeIcon icon={faSignOutAlt} className="me-1" />
+                            Cerrar sesión
+                        </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
             </nav>
@@ -109,8 +141,7 @@ const Layout = ({ content }) => {
                             </div>
                         </div>
                         <div className="sb-sidenav-footer" id="logged-as">
-                            <div className="small">Logged in as:</div>
-                            Start Bootstrap
+                            <LoggedAs />
                         </div>
                     </nav>
                 </div>

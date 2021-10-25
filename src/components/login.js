@@ -1,10 +1,27 @@
-import React, { useRef, useState } from 'react';
-import logo from '../../img/antalis-logo.png';
-import logo_white from '../../img/antalis-logo-white.png';
-import Backend from '../backend';
+import React, { useRef, useState, useEffect } from 'react';
+import logo from '../img/antalis-logo.png';
+import logo_white from '../img/antalis-logo-white.png';
+import Backend, { ValidateToken } from './backend';
 import { Alert } from 'react-bootstrap';
-import { useCookies } from 'react-cookie';
+import Cookies from 'universal-cookie';
 import { useHistory } from 'react-router-dom';
+import Loading from './loading';
+
+const Login = () => {
+    const history = useHistory();
+    const [loading, setLoading] = useState(true);
+    const cookies = new Cookies();
+
+    useEffect(() => {
+        const checkSession = async () => {
+            const valid_token = await ValidateToken(cookies.get('session_jwt'));
+            valid_token ? history.push('/layout') : setLoading(false);
+        }
+        checkSession();
+    }, []);
+
+    return loading ? <Loading /> : <LoginPage />
+}
 
 const LoginPage = () => {
     const email_ref = useRef();
@@ -16,11 +33,11 @@ const LoginPage = () => {
     const remember_me_email = localStorage.getItem('remember_me_email');
 
     const [alerts, setAlerts] = useState([]);
-
     const history = useHistory();
-    const [cookies, setCookie] = useCookies(['session_jwt']);
+    const cookies = new Cookies();
 
     const handleSubmit = e => {
+        e.preventDefault();
         setAlerts([]);
         const email_val = email_ref.current.value;
         const password_val = password_ref.current.value;
@@ -42,7 +59,7 @@ const LoginPage = () => {
             email_req_ref.current.className += ' d-none';
         }
 
-        if(failed) { e.preventDefault(); }
+        if(failed) { return; }
 
         const remember_me = remember_me_ref.current.checked;
         localStorage.setItem('remember_me_email', remember_me ? email_val : '');
@@ -54,8 +71,19 @@ const LoginPage = () => {
         })
         .then(res => {
             const token = 'Bearer ' + res.data.token;
-            setCookie('session_jwt', token);
+            cookies.set('session_jwt', token);
             Backend.defaults.headers.common['Authorization'] = token;
+
+            Backend.get('/Accounts/getUsers', {
+                params: {
+                    email: email_val
+                }
+            })
+            .then(users => {
+                let user = users.data.find(_user => _user.email == email_val);
+                localStorage.setItem('current_user', JSON.stringify(user));
+            });
+
             history.push('/layout');
         })
         .catch(err => {
@@ -65,7 +93,6 @@ const LoginPage = () => {
                 variant: 'danger'
             }]);
         });
-        e.preventDefault();
     }
 
     return (
@@ -127,4 +154,4 @@ const LoginPage = () => {
     );
 }
 
-export default LoginPage;
+export default Login;
