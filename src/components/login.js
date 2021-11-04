@@ -72,7 +72,7 @@ const LoginPage = () => {
         .then(res => {
             const token = 'Bearer ' + res.data.token;
             cookies.set('session_jwt', token);
-            Backend.defaults.headers.common['Authorization'] = token;
+            // Backend.defaults.headers.common['Authorization'] = token;
 
             Backend.get('/Accounts/getUsers', {
                 params: {
@@ -142,7 +142,7 @@ const LoginPage = () => {
 
                         <div className="d-grid">
                             <button type="submit" className="btn btn-primary">Ingresar</button>
-                            <small className="text-white text-center">¿Olvidó su contraseña? Recupérela <a href="#" className="link-primary">aquí</a></small>
+                            <small className="text-white text-center">¿Olvidó su contraseña? Recupérela <a href="/recover" className="link-primary">aquí</a></small>
                         </div>
                     </form>
                     <div className="text-center">

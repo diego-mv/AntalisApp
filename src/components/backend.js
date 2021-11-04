@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useHistory } from "react-router";
 import Cookies from "universal-cookie";
 
 const ValidateToken = (token) => {
@@ -13,7 +12,7 @@ const ValidateToken = (token) => {
             }
         })
         .then(res => {
-            if(res.status != 200) {
+            if(res.status !== 200) {
                 invalid_token = true;
             }
         })
@@ -38,8 +37,10 @@ const Backend = axios.create({
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
     },
-    transformRequest: (data, headers) => { 
+    transformRequest: (data, headers) => {
         const cookies = new Cookies();
+        headers['Authorization'] = cookies.get('session_jwt');
+
         if(data && !data.login) {
             // para todos los casos menos la request de login
             ValidateToken(cookies.get('session_jwt'))
