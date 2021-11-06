@@ -23,7 +23,7 @@ const Layout = ({ content }) => {
 
     useEffect(() => {
         const checkSession = async () => {
-            const valid_token = await ValidateToken(cookies.get('session_jwt'));
+            const valid_token = await ValidateToken(cookies.get('session_jwt', { path: '/' }));
             valid_token ? setLoading(false) : history.push('/');
         }
         checkSession();
@@ -50,7 +50,9 @@ const LayoutPage = ({ content }) => {
     });
 
     const handleLogout = () => {
-        cookies.remove('session_jwt');
+        cookies.remove('session_jwt', {
+            path: '/'
+        });
         history.push('/');
     }
 

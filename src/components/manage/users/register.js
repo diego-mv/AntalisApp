@@ -47,7 +47,7 @@ const RegisterUserForm = ({ roles }) => {
     }
 
     return (
-        <div className="card p-4 bg-white mx-auto" style={{width: '24rem'}}>
+        <div className="card p-4 bg-white mx-auto" style={{width: '20rem'}}>
             <div className="px-2">
                 <h4 className="mb-0">
                     <FontAwesomeIcon icon={faUserPlus} className="me-2" />

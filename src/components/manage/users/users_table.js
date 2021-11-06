@@ -1,4 +1,4 @@
-import { faEdit, faSearch, faSort, faTrash, faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faSearch, faSortAmountUp, faSortAmountDown, faTrash, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState, useEffect } from "react";
 import { Table, Badge, Pagination } from "react-bootstrap";
@@ -7,12 +7,12 @@ import LoadingContent from "../../layout/loading_content";
 
 const UsersTable = () => {
     const [loading, setLoading] = useState(true);
-    const [users, setUsers] = useState([]);
+    const [usersData, setUsersData] = useState([]);
 
     useEffect(() => {
         Backend.get('/Accounts/getUsers', {})
         .then(_users => {
-            setUsers(_users);
+            setUsersData(_users);
             setLoading(false);
         })
         .catch(err => {
@@ -21,19 +21,68 @@ const UsersTable = () => {
         });
     }, []);
 
-    return loading ? <LoadingContent /> : <UsersTableContent users={users} />
+    return loading ? <LoadingContent /> : <UsersTableContent usersData={usersData.data} />
 }
 
-const UsersTableContent = ({ users }) => {
+const UsersTableContent = ({ usersData }) => {
+    const itemsPerPage = 1;
+    const totalItems = usersData.itemsCount;
+    const numOfPages = Math.ceil(totalItems / itemsPerPage);
+
+    const [currentPage, setCurrentPage] = useState(usersData.pageIndex);
+    const [currentFilter, setCurrentFilter] = useState('fullname');
+    const [filterDir, setFilterDir] = useState('asc');
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        Backend.get('/Accounts/getUsers', {
+            params: {
+                pageSize: itemsPerPage,
+                pageIndex: currentPage
+            }
+        })
+        .then(res => {
+            console.log(res.data.data);
+            setUsers(res.data.data);
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    }, [currentPage, currentFilter, filterDir]);
+
+    const nextPage = () => {
+        if(currentPage < numOfPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    }
+
+    const previousPage = () => {
+        if(currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    }
+
+    const firstPage = () => {
+        if(currentPage != 1) {
+            setCurrentPage(1);
+        }
+    }
+
+    const lastPage = () => {
+        if(currentPage != numOfPages) {
+            setCurrentPage(numOfPages);
+        }
+    }
+
     return (
         <div>
             <div className="d-flex justify-content-between mb-3">
                 <a href="/manage/users/new" className="btn btn-primary">
-                    <FontAwesomeIcon icon={faUserPlus} className="me-2" />
-                    Nuevo
+                    <FontAwesomeIcon icon={faUserPlus} />
+                    <span className="d-none d-md-inline ms-2">Nuevo</span>
                 </a>
 
-                <div>
+                <div style={{width: '12rem'}}>
                     <div className="input-group">
                         <span className="input-group-text">
                             <FontAwesomeIcon icon={faSearch} />
@@ -42,43 +91,53 @@ const UsersTableContent = ({ users }) => {
                     </div>
                 </div>
             </div>
-            <Table striped hover borderless responsive>
+            <Table striped hover borderless responsive className="mb-0">
                 <thead>
                     <tr>
-                        <th>
+                        <th style={{minWidth: '8rem'}}>
                             Nombre
-                            <FontAwesomeIcon icon={faSort} className="ms-2" />
+                            {currentFilter == 'fullname' ?
+                                <FontAwesomeIcon icon={filterDir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
+                                : <></>}
                         </th>
-                        <th>
+                        <th style={{minWidth: '8rem'}}>
                             Rol
-                            <FontAwesomeIcon icon={faSort} className="ms-2" />
+                            {currentFilter == 'role' ?
+                                <FontAwesomeIcon icon={filterDir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
+                                : <></>}
                         </th>
-                        <th>
+                        <th style={{minWidth: '12rem'}}>
                             Correo electrónico
-                            <FontAwesomeIcon icon={faSort} className="ms-2" />
+                            {currentFilter == 'email' ?
+                                <FontAwesomeIcon icon={filterDir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
+                                : <></>}
                         </th>
-                        <th className="text-center">
+                        <th className="text-center" style={{minWidth: '8rem'}}>
                             Teléfono
-                            <FontAwesomeIcon icon={faSort} className="ms-2" />
+                            {currentFilter == 'phone' ?
+                                <FontAwesomeIcon icon={filterDir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
+                                : <></>}
                         </th>
-                        <th className="text-center">
+                        <th className="text-center" style={{minWidth: '8rem'}}>
                             Estado
-                            <FontAwesomeIcon icon={faSort} className="ms-2" />
+                            {currentFilter == 'isEnabled' ?
+                                <FontAwesomeIcon icon={filterDir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
+                                : <></>}
                         </th>
-                        <th className="text-center">Acciones</th>
+                        <th className="text-center" style={{minWidth: '8rem'}}>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {users.data.map((user, index) => {
+                    {users.map((user, index) => {
                         return (
                             <tr key={index}>
                                 <td>{user.fullname}</td>
-                                <td>{user.rol}</td>
+                                <td>{user.role}</td>
                                 <td>{user.email}</td>
-                                <td className="text-center">{user.telefono || <>&ndash;</>}</td>
+                                <td className="text-center">{user.phone || <>&ndash;</>}</td>
                                 <td className="text-center">
-                                    <Badge pill bg={user.accountEnabled ? 'success' : 'danger'}>
-                                        {user.accountEnabled ? 'Activo' : 'Inactivo'}
+                                    <Badge pill bg={user.isEnabled ? 'success' : 'danger'}>
+                                        {user.isEnabled ? 'Activo' : 'Inactivo'}
                                     </Badge>
                                 </td>
                                 <td className="text-center">
@@ -93,29 +152,25 @@ const UsersTableContent = ({ users }) => {
                         );
                     })}
                 </tbody>
-                <caption>
+                <caption className="pb-0">
                     <div className="d-flex justify-content-between mt-3">
                         <div>
-                            Mostrando elementos # &ndash; # de #
+                            Mostrando elementos {currentPage * itemsPerPage - itemsPerPage + 1} &ndash; {currentPage * itemsPerPage} de {totalItems}
                         </div>
 
                         <div>
                             <Pagination size="sm">
-                                <Pagination.First />
-                                <Pagination.Prev />
-                                <Pagination.Item>{1}</Pagination.Item>
-                                <Pagination.Ellipsis />
+                                <Pagination.First onClick={firstPage} />
+                                <Pagination.Prev  onClick={previousPage} />
 
-                                <Pagination.Item>{10}</Pagination.Item>
-                                <Pagination.Item>{11}</Pagination.Item>
-                                <Pagination.Item active>{12}</Pagination.Item>
-                                <Pagination.Item>{13}</Pagination.Item>
-                                <Pagination.Item disabled>{14}</Pagination.Item>
+                                {currentPage > 1 ? <Pagination.Ellipsis /> : <></>}
 
-                                <Pagination.Ellipsis />
-                                <Pagination.Item>{20}</Pagination.Item>
-                                <Pagination.Next />
-                                <Pagination.Last />
+                                <Pagination.Item active>{currentPage}</Pagination.Item>
+
+                                {numOfPages - currentPage >= 1 ? <Pagination.Ellipsis /> : <></>}
+
+                                <Pagination.Next onClick={nextPage} />
+                                <Pagination.Last onClick={lastPage} />
                             </Pagination>
                         </div>
                     </div>

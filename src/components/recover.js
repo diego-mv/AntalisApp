@@ -14,7 +14,7 @@ const RecoverPassword = () => {
 
     useEffect(() => {
         const checkSession = async () => {
-            const valid_token = await ValidateToken(cookies.get('session_jwt'));
+            const valid_token = await ValidateToken(cookies.get('session_jwt', { path: '/' }));
             valid_token ? history.push('/layout') : setLoading(false);
         }
         checkSession();

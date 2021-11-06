@@ -18,7 +18,7 @@ const LoadingContent = () => {
     }
 
     return (
-        <div className="d-flex h-100 justify-content-center align-items-center">
+        <div className="d-flex h-100 justify-content-center align-items-center my-auto">
             <Spinner animation="grow" size="sm" role="status" variant="primary" className="mx-1" style={delay0}></Spinner>
             <Spinner animation="grow" size="sm" role="status" variant="primary" className="mx-1" style={delay500}></Spinner>
             <Spinner animation="grow" size="sm" role="status" variant="primary" className="mx-1" style={delay1000}></Spinner>

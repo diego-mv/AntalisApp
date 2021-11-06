@@ -14,7 +14,7 @@ const Login = () => {
 
     useEffect(() => {
         const checkSession = async () => {
-            const valid_token = await ValidateToken(cookies.get('session_jwt'));
+            const valid_token = await ValidateToken(cookies.get('session_jwt', { path: '/' }));
             valid_token ? history.push('/layout') : setLoading(false);
         }
         checkSession();
@@ -71,16 +71,15 @@ const LoginPage = () => {
         })
         .then(res => {
             const token = 'Bearer ' + res.data.token;
-            cookies.set('session_jwt', token);
+            cookies.set('session_jwt', token, {
+                path: '/'
+            });
             // Backend.defaults.headers.common['Authorization'] = token;
 
-            Backend.get('/Accounts/getUsers', {
-                params: {
-                    email: email_val
-                }
+            Backend.get('/Accounts/currentUser', {
             })
-            .then(users => {
-                let user = users.data.find(_user => _user.email == email_val);
+            .then(_user => {
+                let user = _user.data;
                 localStorage.setItem('current_user', JSON.stringify(user));
             });
 
