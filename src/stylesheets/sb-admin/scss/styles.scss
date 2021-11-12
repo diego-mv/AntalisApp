@@ -16,6 +16,14 @@ $theme-colors: (
     @extend .text-white
 };
 
+.link-primary, .link-secondary, .link-success, .link-danger, .link-warning, .link-info, .link-dark {
+    text-decoration: none;
+}
+
+.link-primary:hover, .link-secondary:hover, .link-success:hover, .link-danger:hover, .link-warning:hover, .link-info:hover, .link-dark:hover {
+    text-decoration: underline;
+}
+
 $pagination-color: map-get($map: $theme-colors, $key: "primary");
 $pagination-hover-color: map-get($map: $theme-colors, $key: "primary");
 $pagination-active-bg: map-get($map: $theme-colors, $key: "primary");

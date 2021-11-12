@@ -1,4 +1,12 @@
 @charset "UTF-8";
+.link-primary, .link-secondary, .link-success, .link-danger, .link-warning, .link-info, .link-dark {
+  text-decoration: none;
+}
+
+.link-primary:hover, .link-secondary:hover, .link-success:hover, .link-danger:hover, .link-warning:hover, .link-info:hover, .link-dark:hover {
+  text-decoration: underline;
+}
+
 /*!
  * Bootstrap v5.1.1 (https://getbootstrap.com/)
  * Copyright 2011-2021 The Bootstrap Authors

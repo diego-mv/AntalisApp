@@ -3,7 +3,7 @@ import Login from './components/login';
 import Layout from './components/layout';
 import RecoverPassword from './components/recover';
 import ManageUsers from './components/manage/users';
-import RegisterUser from './components/manage/users/register';
+import RegisterUser from './components/manage/users/register.jsx';
 
 import {
   BrowserRouter as Router,
