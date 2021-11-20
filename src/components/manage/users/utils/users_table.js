@@ -1,19 +1,18 @@
-import { faEdit, faSearch, faSortAmountUp, faSortAmountDown, faTrash, faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faSearch, faSortAmountUp, faSortAmountDown, faUserMinus, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState, useEffect } from "react";
-import { Table, Badge, Pagination } from "react-bootstrap";
-import Backend from "../../backend";
-import LoadingContent from "../../layout/loading_content";
+import { Table, Badge, Pagination, OverlayTrigger, Tooltip } from "react-bootstrap";
+import Backend from "../../../backend";
+import LoadingContent from "../../../layout/loading_content";
 
 const UsersTable = () => {
-    const [loading, setLoading] = useState(true);
     const [usersData, setUsersData] = useState([]);
 
     useEffect(() => {
         Backend.get('/Accounts/getUsers', {})
         .then(_users => {
+            console.log(_users.data);
             setUsersData(_users.data);
-            setLoading(false);
         })
         .catch(err => {
             // console.log('ERROR');
@@ -21,21 +20,22 @@ const UsersTable = () => {
                 itemsCount: 0,
                 pageIndex: 1
             });
-            setLoading(false);
         });
     }, []);
 
-    return loading ? <LoadingContent /> : <UsersTableContent usersData={usersData} />
+    return !usersData ? <LoadingContent /> : <UsersTableContent usersData={usersData} />
 }
 
 const UsersTableContent = ({ usersData }) => {
-    const itemsPerPage = 2;
-    const totalItems = usersData.itemsCount;
-    const numOfPages = Math.ceil(totalItems / itemsPerPage);
+    const itemsPerPage = 5;
+    const [totalItems, setTotalItems] = useState(usersData.itemsCount);
+    const [numOfPages, setNumOfPages] = useState(Math.ceil(totalItems / itemsPerPage));
 
-    const [currentPage, setCurrentPage] = useState(usersData.pageIndex);
-    const [currentFilter, setCurrentFilter] = useState('fullname');
-    const [filterDir, setFilterDir] = useState('asc');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [currentFilter, setCurrentFilter] = useState({
+        columnName: 'fullname',
+        dir: 'asc'
+    });
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
@@ -43,18 +43,20 @@ const UsersTableContent = ({ usersData }) => {
             params: {
                 pageSize: itemsPerPage,
                 pageIndex: currentPage,
-                OrderBy: currentFilter,
-                Order: filterDir
+                OrderBy: currentFilter.columnName,
+                Order: currentFilter.dir
             }
         })
         .then(res => {
-            console.log(res.data.data);
+            // console.log(res.data);
+            setTotalItems(res.data.itemsCount);
+            setNumOfPages(Math.ceil(res.data.itemsCount / itemsPerPage));
             setUsers(res.data.data);
         })
         .catch(err => {
             console.log(err);
         });
-    }, [currentPage, currentFilter, filterDir]);
+    }, [currentPage, currentFilter]);
 
     const nextPage = () => {
         if(currentPage < numOfPages) {
@@ -80,13 +82,16 @@ const UsersTableContent = ({ usersData }) => {
         }
     }
 
-    const filterUsers = (filterCol) => {
-        // setCurrentFilter(filterCol);
-        // let filter_dir = 'asc';
-        // if(currentFilter == filterCol && filterDir == 'asc') {
-        //     filter_dir = 'desc';
-        // }
-        // setFilterDir(filter_dir);
+    const filterUsers = (event) => {
+        const filterCol = event.target.getAttribute('col');
+        let filter_dir = 'asc';
+        if(currentFilter.columnName == filterCol && currentFilter.dir == 'asc') {
+            filter_dir = 'des';
+        }
+        setCurrentFilter({
+            columnName: filterCol,
+            dir: filter_dir
+        });
     }
 
     return (
@@ -109,34 +114,34 @@ const UsersTableContent = ({ usersData }) => {
             <Table striped hover borderless responsive className="mb-0">
                 <thead>
                     <tr>
-                        <th style={{minWidth: '8rem', cursor: 'pointer'}} onClick={filterUsers('fullname')}>
+                        <th style={{minWidth: '8rem', cursor: 'pointer'}} onClick={filterUsers} col={'fullname'}>
                             Nombre
-                            {currentFilter == 'fullname' ?
-                                <FontAwesomeIcon icon={filterDir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
+                            {currentFilter.columnName == 'fullname' ?
+                                <FontAwesomeIcon icon={currentFilter.dir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
                                 : <></>}
                         </th>
-                        <th style={{minWidth: '8rem', cursor: 'pointer'}} onClick={filterUsers('role')}>
+                        <th style={{minWidth: '8rem', cursor: 'pointer'}} onClick={filterUsers} col={'role'}>
                             Rol
-                            {currentFilter == 'role' ?
-                                <FontAwesomeIcon icon={filterDir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
+                            {currentFilter.columnName == 'role' ?
+                                <FontAwesomeIcon icon={currentFilter.dir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
                                 : <></>}
                         </th>
-                        <th style={{minWidth: '12rem', cursor: 'pointer'}} onClick={filterUsers('email')}>
+                        <th style={{minWidth: '12rem', cursor: 'pointer'}} onClick={filterUsers} col={'email'}>
                             Correo electrónico
-                            {currentFilter == 'email' ?
-                                <FontAwesomeIcon icon={filterDir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
+                            {currentFilter.columnName == 'email' ?
+                                <FontAwesomeIcon icon={currentFilter.dir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
                                 : <></>}
                         </th>
-                        <th className="text-center" style={{minWidth: '8rem', cursor: 'pointer'}} onClick={filterUsers('phone')}>
+                        <th className="text-center" style={{minWidth: '8rem', cursor: 'pointer'}} onClick={filterUsers} col={'phone'}>
                             Teléfono
-                            {currentFilter == 'phone' ?
-                                <FontAwesomeIcon icon={filterDir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
+                            {currentFilter.columnName == 'phone' ?
+                                <FontAwesomeIcon icon={currentFilter.dir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
                                 : <></>}
                         </th>
-                        <th className="text-center" style={{minWidth: '8rem', cursor: 'pointer'}} onClick={filterUsers('isEnabled')}>
+                        <th className="text-center" style={{minWidth: '8rem', cursor: 'pointer'}} onClick={filterUsers} col={'isEnabled'}>
                             Estado
-                            {currentFilter == 'isEnabled' ?
-                                <FontAwesomeIcon icon={filterDir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
+                            {currentFilter.columnName == 'isEnabled' ?
+                                <FontAwesomeIcon icon={currentFilter.dir == 'asc' ? faSortAmountUp : faSortAmountDown} className="ms-2" />
                                 : <></>}
                         </th>
                         <th className="text-center" style={{minWidth: '8rem'}}>Acciones</th>
@@ -156,12 +161,23 @@ const UsersTableContent = ({ usersData }) => {
                                     </Badge>
                                 </td>
                                 <td className="text-center">
-                                    <a className="btn btn-outline-secondary rounded-circle text-center me-2">
-                                        <FontAwesomeIcon icon={faEdit} />
-                                    </a>
-                                    <a className="btn btn-outline-secondary rounded-circle text-center">
-                                        <FontAwesomeIcon icon={faTrash} />
-                                    </a>
+                                    <OverlayTrigger placement="left"
+                                        overlay={<Tooltip>Editar usuario</Tooltip>}>
+
+                                        <a className="btn btn-outline-secondary text-center me-2"
+                                            href={'/manage/users/edit/' + user.id}>
+                                            <FontAwesomeIcon icon={faEdit} />
+                                        </a>
+                                    </OverlayTrigger>
+
+                                    <OverlayTrigger placement="left"
+                                        overlay={<Tooltip>Desactivar cuenta</Tooltip>}>
+
+                                        <a className="btn btn-outline-secondary text-center">
+                                            <FontAwesomeIcon icon={faUserMinus} />
+                                        </a>
+                                    </OverlayTrigger>
+
                                 </td>
                             </tr>
                         );
@@ -170,7 +186,7 @@ const UsersTableContent = ({ usersData }) => {
                 <caption className="pb-0">
                     <div className="d-flex justify-content-between mt-3">
                         <div>
-                            Mostrando elementos {currentPage * itemsPerPage - itemsPerPage + 1} &ndash; {currentPage * itemsPerPage} de {totalItems}
+                            Mostrando elementos {currentPage * itemsPerPage - itemsPerPage + 1} &ndash; {currentPage * itemsPerPage < totalItems ? currentPage * itemsPerPage : totalItems} de {totalItems}
                         </div>
 
                         <div>

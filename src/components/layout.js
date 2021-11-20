@@ -43,11 +43,11 @@ const LayoutPage = ({ content }) => {
         localStorage.setItem('sb|sidebar-toggle', layout_wrapper.current.classList.contains('sb-sidenav-toggled'));
     }
 
-    useEffect(() => {
-        if (localStorage.getItem('sb|sidebar-toggle') === 'true') {
-            layout_wrapper.current.classList.toggle('sb-sidenav-toggled');
-        }
-    });
+    // useEffect(() => {
+    //     if (localStorage.getItem('sb|sidebar-toggle') === 'true') {
+    //         layout_wrapper.current.classList.toggle('sb-sidenav-toggled');
+    //     }
+    // });
 
     const handleLogout = () => {
         cookies.remove('session_jwt', {

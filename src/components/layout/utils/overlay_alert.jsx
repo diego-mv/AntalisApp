@@ -1,3 +1,5 @@
+import { faCheckCircle, faExclamationCircle, faInfoCircle, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useRef } from "react";
 
 const createUUID = () => {
@@ -24,15 +26,23 @@ const OverlayAlert = ({ variant, message, duration }) => {
 
     useEffect(() => {
         setInterval(() => {
-            alert_ref.current.classList.remove('alert-fade-in');
-            alert_ref.current.classList.add('alert-fade-out');
+            if(alert_ref.current) {
+                alert_ref.current.classList.remove('alert-fade-in');
+                alert_ref.current.classList.add('alert-fade-out');
+            }
         }, duration);
     }, []);
 
     return (
         <div className={`alert alert-${variant} alert-fade-in`} role="alert"
             style={styles} ref={alert_ref} key={uuid}>
-            {message}
+            {variant == 'success' ? <FontAwesomeIcon icon={faCheckCircle} className="me-2" /> : <></>}
+            {variant == 'info' ? <FontAwesomeIcon icon={faInfoCircle} className="me-2" /> : <></>}
+            {variant == 'warning' ? <FontAwesomeIcon icon={faExclamationCircle} className="me-2" /> : <></>}
+            {variant == 'danger' ? <FontAwesomeIcon icon={faTimesCircle} className="me-2" /> : <></>}
+            <small>
+                {message}
+            </small>
         </div>
     );
 }

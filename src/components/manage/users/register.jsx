@@ -37,8 +37,20 @@ const RegisterUserForm = ({ roles }) => {
     const client_info_ref = useRef();
     const technician_info_ref = useRef();
 
+    const userName_ref = useRef();
+    const userEmail_ref = useRef();
+    const userPhone_ref = useRef();
     const role_ref = useRef();
-    const comuna_ref = useRef();
+
+    const techExtern_ref = useRef();
+    const techCompany_ref = useRef();
+    const techCompanyInput_ref = useRef();
+
+    const clientCode_ref = useRef();
+    const clientRegion_ref = useRef();
+    const clientComuna_ref = useRef();
+    const clientCity_ref = useRef();
+    const clientAddress_ref = useRef();
 
     const [alert, setAlert] = useState(null);
 
@@ -78,8 +90,16 @@ const RegisterUserForm = ({ roles }) => {
         }
     }
 
+    const handleEsExterno = (event) => {
+        if(event.target.checked) {
+            techCompany_ref.current.classList.remove('d-none');
+        } else {
+            techCompany_ref.current.classList.add('d-none');
+        }
+    }
+
     const handleRegionChange = (event) => {
-        comuna_ref.current.clearValue();
+        clientComuna_ref.current.clearValue();
         Backend.get('/Ubicacion/Comunas', {
             params: {
                 IdRegion: event.value
@@ -98,21 +118,157 @@ const RegisterUserForm = ({ roles }) => {
         });
     }
 
+    const trimFields = () => {
+        document.querySelectorAll('.field').forEach(elem => {
+            elem.value = elem.value.trim();
+        });
+    }
 
     const submitUser = (event) => {
         event.preventDefault();
+        trimFields();
 
-        const role = role_ref.current.getValue();
-        console.log(role);
-        setAlert(
-            <OverlayAlert
-                variant="danger"
-                message="Debes seleccionar un rol"
-                duration="3000"
-            />
-        );
-        if(!role) {
+        let alert_required = false;
+
+        const required_fields = [userName_ref, userEmail_ref];
+        required_fields.map(field => {
+            field.current.classList.remove('required-field');
+            if(!field.current.value) {
+                alert_required = true;
+                field.current.classList.add('required-field');
+            }
+        });
+
+
+        let role = role_ref.current.getValue();
+        const role_control = role_ref.current.controlRef;
+        if(role_control) { role_control.classList.remove('required-field'); }
+        if(!role.length) {
+            alert_required = true;
+            if(role_control) { role_control.classList.add('required-field'); }
+        } else {
+            role = role[0].role;
+        }
+
+        if(role == 'CLIENTE') {
+            const client_required_fields = [clientCode_ref, clientCity_ref, clientAddress_ref];
+            client_required_fields.map(field => {
+                field.current.classList.remove('required-field');
+                if(!field.current.value) {
+                    alert_required = true;
+                    field.current.classList.add('required-field');
+                }
+            });
+
+            let region = clientRegion_ref.current.getValue();
+            const clientRegion_control = clientRegion_ref.current.controlRef;
+            if(clientRegion_control) { clientRegion_control.classList.remove('required-field'); }
+            if(!region.length) {
+                alert_required = true;
+                if(clientRegion_control) { clientRegion_control.classList.add('required-field'); }
+            }
+
+            let comuna = clientComuna_ref.current.getValue();
+            const clientComuna_control = clientComuna_ref.current.controlRef;
+            if(clientComuna_control) { clientComuna_control.classList.remove('required-field'); }
+            if(!comuna.length) {
+                alert_required = true;
+                if(clientComuna_control) { clientComuna_control.classList.add('required-field'); }
+            }
+
+        } else if(role == 'TECNICO') {
+            techCompanyInput_ref.current.classList.remove('required-field');
+            if(techExtern_ref.current.checked && !techCompanyInput_ref.current.value) {
+                alert_required = true;
+                techCompanyInput_ref.current.classList.add('required-field');
+            }
+        }
+
+        if(alert_required) {
+            setAlert(
+                <OverlayAlert
+                    variant="danger"
+                    message="Debes llenar los campos requeridos"
+                    duration="3000"
+                />
+            );
             return;
+        }
+
+        if(role == 'CLIENTE') {
+            console.log(clientRegion_ref.current);
+            Backend.post('/Accounts/RegisterCliente', {
+                email: userEmail_ref.current.value,
+                fullName: userName_ref.current.value,
+                phone: userPhone_ref.current.value,
+                codigo: clientCode_ref.current.value,
+                region: clientRegion_ref.current.getValue()[0].value,
+                comuna: clientComuna_ref.current.getValue()[0].value,
+                ciudad: clientCity_ref.current.value,
+                calle: clientAddress_ref.current.value
+            })
+            .then(res => {
+                setAlert(<OverlayAlert
+                    variant="success"
+                    message="El usuario ha sido registrado exitosamente"
+                    duration="3000"
+                />);
+            })
+            .catch(err => {
+                setAlert(<OverlayAlert
+                    variant="danger"
+                    message="Ocurrió un error al intentar registrar al usuario. Por favor intente nuevamente más tarde"
+                    duration="3000"
+                />);
+            });
+        } else if(role == 'TECNICO') {
+            let externo = techExtern_ref.current.checked;
+            Backend.post('/Accounts/RegisterTecnico', {
+                email: userEmail_ref.current.value,
+                fullName: userName_ref.current.value,
+                username: userEmail_ref.current.value,
+                phone: userPhone_ref.current.value,
+                password: 'Antalis;123',
+                esExterno: externo,
+                empresa: externo ? techCompanyInput_ref.current.value : ''
+            })
+            .then(res => {
+                setAlert(<OverlayAlert
+                    variant="success"
+                    message="El usuario ha sido registrado exitosamente"
+                    duration="3000"
+                />);
+            })
+            .catch(err => {
+                setAlert(<OverlayAlert
+                    variant="danger"
+                    message="Ocurrió un error al intentar registrar al usuario. Por favor intente nuevamente más tarde"
+                    duration="3000"
+                />);
+            });
+        } else {
+            Backend.post('/Accounts/RegisterUser', {
+                email: userEmail_ref.current.value,
+                fullName: userName_ref.current.value,
+                username: userEmail_ref.current.value,
+                phone: userPhone_ref.current.value,
+                password: 'Antalis;123',
+                rolId: role_ref.current.getValue()[0].value
+            })
+            .then(res => {
+                setAlert(<OverlayAlert
+                    variant="success"
+                    message="El usuario ha sido registrado exitosamente"
+                    duration="3000"
+                />);
+            })
+            .catch(err => {
+                setAlert(<OverlayAlert
+                    variant="danger"
+                    message="Ocurrió un error al intentar registrar al usuario. Por favor intente nuevamente más tarde"
+                    duration="3000"
+                />);
+            });
         }
     }
 
@@ -138,15 +294,15 @@ const RegisterUserForm = ({ roles }) => {
                 <form onSubmit={submitUser}>
                     <div className="mb-3">
                         <label className="form-label">Nombre</label>
-                        <input type="text" name="userName" maxLength="50" className="form-control" required />
+                        <input type="text" name="userName" maxLength="50" className="form-control field" ref={userName_ref} />
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Correo electrónico</label>
-                        <input type="email" name="userEmail" className="form-control" required/>
+                        <input type="email" name="userEmail" className="form-control field" ref={userEmail_ref} />
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Teléfono</label>
-                        <input type="text" name="userPhone" maxLength="30" className="form-control" />
+                        <input type="text" name="userPhone" maxLength="30" className="form-control field" ref={userPhone_ref} />
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Rol</label>
@@ -160,12 +316,12 @@ const RegisterUserForm = ({ roles }) => {
 
                         <div className="mb-3">
                             <label className="form-label">Código de cliente</label>
-                            <input type="text" className="form-control" />
+                            <input type="text" className="form-control field" ref={clientCode_ref} />
                         </div>
 
                         <div className="mb-3">
                             <label className="form-label">Región</label>
-                            <Select options={regiones} styles={customStyleSelect} onChange={handleRegionChange}
+                            <Select options={regiones} styles={customStyleSelect} onChange={handleRegionChange} ref={clientRegion_ref}
                                 placeholder={'Seleccione una región'} isSearchable={true} noOptionsMessage={() => 'Sin resultados'}
                             />
                         </div>
@@ -173,31 +329,31 @@ const RegisterUserForm = ({ roles }) => {
                         <div className="mb-3">
                             <label className="form-label">Comuna</label>
                             <Select options={comunas} styles={customStyleSelect} noOptionsMessage={() => 'Sin resultados'}
-                                placeholder={'Seleccione una comuna'} isSearchable={true} ref={comuna_ref} />
+                                placeholder={'Seleccione una comuna'} isSearchable={true} ref={clientComuna_ref} />
                         </div>
 
                         <div className="mb-3">
                             <label className="form-label">Ciudad</label>
-                            <input type="text" className="form-control" />
+                            <input type="text" className="form-control field" ref={clientCity_ref} />
                         </div>
 
                         <div className="mb-3">
                             <label className="form-label">Dirección</label>
-                            <input type="text" className="form-control" />
+                            <input type="text" className="form-control field" ref={clientAddress_ref} />
                         </div>
                     </div>
 
                     <div className="d-none mb-3" ref={technician_info_ref}>
                         <p className="lead mb-2">Información técnico</p>
 
-                        <div className="mb-3">
-                            <label className="form-label">Empresa</label>
-                            <input type="text" className="form-control" />
+                        <div className="form-check mb-3">
+                            <input type="checkbox" className="form-check-input" onChange={handleEsExterno} ref={techExtern_ref} />
+                            <label className="form-check-label">Es externo</label>
                         </div>
 
-                        <div className="form-check mb-3">
-                            <input type="checkbox" className="form-check-input" />
-                            <label className="form-check-label">Es externo</label>
+                        <div className="mb-3 d-none" ref={techCompany_ref}>
+                            <label className="form-label">Empresa</label>
+                            <input type="text" className="form-control field" ref={techCompanyInput_ref} />
                         </div>
                     </div>
 

@@ -2,10 +2,10 @@ import React, { useRef, useState, useEffect } from 'react';
 import logo from '../img/antalis-logo.png';
 import logo_white from '../img/antalis-logo-white.png';
 import Backend, { ValidateToken } from './backend';
-import { Alert } from 'react-bootstrap';
 import Cookies from 'universal-cookie';
 import { useHistory } from 'react-router-dom';
 import Loading from './loading';
+import OverlayAlert from './layout/utils/overlay_alert';
 
 const Login = () => {
     const history = useHistory();
@@ -32,13 +32,12 @@ const LoginPage = () => {
     const remember_me_ref = useRef();
     const remember_me_email = localStorage.getItem('remember_me_email');
 
-    const [alerts, setAlerts] = useState([]);
+    const [alert, setAlert] = useState(null);
     const history = useHistory();
     const cookies = new Cookies();
 
     const handleSubmit = e => {
         e.preventDefault();
-        setAlerts([]);
         const email_val = email_ref.current.value;
         const password_val = password_ref.current.value;
         let failed = false;
@@ -87,10 +86,11 @@ const LoginPage = () => {
         })
         .catch(err => {
             // alert user
-            setAlerts([{
-                msg: 'Las credenciales son incorrectas o el correo no se encuentra registrado',
-                variant: 'danger'
-            }]);
+            setAlert(<OverlayAlert
+                variant="danger"
+                message="Las credenciales son incorrectas"
+                duration="3000"
+            />);
         });
     }
 
@@ -112,13 +112,7 @@ const LoginPage = () => {
                             Sistema de gestión de servicio técnico
                         </h5>
 
-                        {alerts.map((item, index) => {
-                            return (
-                                <Alert variant={item.variant} key={index} className="my-2">
-                                    <small>{item.msg}</small>
-                                </Alert>
-                            );
-                        })}
+                        {alert}
 
                         <div className="mb-2">
                             <label className="form-label text-white">Correo electrónico</label>

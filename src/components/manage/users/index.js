@@ -2,7 +2,7 @@ import { faUsers } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import Layout from "../../layout";
-import UsersTable from "./users_table";
+import UsersTable from "./utils/users_table";
 
 const ManageUsers = () => {
     return <Layout content={<ManageUsersContent />} />;
