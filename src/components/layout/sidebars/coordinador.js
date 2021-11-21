@@ -41,7 +41,7 @@ const SidebarCoordinador = () => {
                 <div className="sb-nav-link-icon"><FontAwesomeIcon icon={faHardHat} /></div>
                 Técnicos
             </a>
-            <a className="nav-link" href="#">
+            <a className="nav-link" href="/manage/customers">
                 <div className="sb-nav-link-icon"><FontAwesomeIcon icon={faUserTie} /></div>
                 Clientes
             </a>
