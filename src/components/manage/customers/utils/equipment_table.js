@@ -15,7 +15,6 @@ const EquipmentTable = ({match}) => {
             }
         })
         .then(_users => {
-            console.log(_users.data);
             setEquipmentData(_users.data);
         })
         .catch(err => {
@@ -43,7 +42,6 @@ const EquipmentTableContent = ({ equipmentData, match }) => {
     const [customers, setCustomers] = useState([]);
 
     useEffect(() => {
-        console.log(match.params.id)
         Backend.get('/OrdenTrabajo/GetEquipos', {
             params: {
                 IdCliente: match.params.id,

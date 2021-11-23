@@ -1,44 +1,44 @@
-import { faArrowLeft, faUserPlus, faLaptopHouse} from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faLaptopHouse} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState, useEffect, useRef } from "react";
 import Layout from "../../layout";
 import LoadingContent from "../../layout/loading_content";
 import Backend from "../../backend";
 import OverlayAlert from "../../layout/utils/overlay_alert";
-import { useHistory } from "react-router";
 
-const AddEquipment = ({ match }) => {
+const EditEquipment = ({ match }) => {
     const [loading, setLoading] = useState(true);
-    const [nameCustomer, setNameCustomer] = useState("");
+    const [dataEquipment, setDataEquipment] = useState(null);
 
     useEffect(() => {
-        Backend.get('/Accounts/getUser', {
+        Backend.get('/OrdenTrabajo/GetEquipo', {
             params: {
-                IdUser: match.params.id
+                IdEquipo: match.params.id
             }
         })
         .then(res => {
-            setNameCustomer(res.data.fullname)
+            setDataEquipment(res.data);
             setLoading(false);
         })
         .catch(err => {
             console.log(err);
             setLoading(false);
         });
+
+
     }, []);
 
-    return loading ? <LoadingContent /> : <Layout content={<AddEquipmentForm match={match} name={nameCustomer}/>} />;
+    return !dataEquipment ? <LoadingContent /> : <Layout content={<EditEquipmentForm match={match} dataEquipment = {dataEquipment}/>} />;
 }
 
-const AddEquipmentForm = ({ match, name}) => {
-    const history = useHistory();
+const EditEquipmentForm = ({ match, dataEquipment}) => {
     const brand_ref = useRef();
     const model_ref = useRef();
     const serie_ref = useRef();
     const contract_ref = useRef();
     const contractVig_ref = useRef();
     const contractVigShow_ref = useRef();
-
+    
     const [alert, setAlert] = useState(null);
 
     const trimFields = () => {
@@ -139,7 +139,7 @@ const AddEquipmentForm = ({ match, name}) => {
         <div>
             {alert}
             <div className="my-2">
-                <a className="link-primary" href="/manage/customers">
+                <a className="link-primary" href={"/manage/equipment/"+dataEquipment.clienteId}>
                     <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
                     Volver atrás
                 </a>
@@ -148,8 +148,7 @@ const AddEquipmentForm = ({ match, name}) => {
                 <div className="px-2">
                     <h4 className="mb-0">
                         <FontAwesomeIcon icon={faLaptopHouse} className="me-2" />
-                        <strong className="text-primary">{name}</strong><br/> 
-                        <p className="text-muted">Agregar equipo</p>       
+                        Editar equipo
                     </h4>
                 </div>
 
@@ -158,23 +157,23 @@ const AddEquipmentForm = ({ match, name}) => {
                 <form onSubmit={submitEquipment}>
                     <div className="mb-3">
                         <label className="form-label">Marca</label>
-                        <input type="text" name="brand" maxLength="50" className="form-control field" ref={brand_ref} />
+                        <input type="text" name="brand" maxLength="50" className="form-control field" ref={brand_ref} defaultValue={dataEquipment.marca} />
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Modelo</label>
-                        <input type="text" name="model" className="form-control field" ref={model_ref} />
+                        <input type="text" name="model" className="form-control field" ref={model_ref} defaultValue={dataEquipment.modelo}/>
                     </div>
                     <div className="mb-3">
                         <label className="form-label">Número de Serie</label>
-                        <input type="text" name="serie" maxLength="30" className="form-control field" ref={serie_ref} />
+                        <input type="text" name="serie" maxLength="30" className="form-control field" ref={serie_ref} defaultValue={dataEquipment.serie}/>
                     </div>
                     <div className="form-check mb-3">
-                            <input type="checkbox" className="form-check-input" id="contractCheck" ref={contract_ref} onChange={handleHasContract} />
+                            <input type="checkbox" className="form-check-input" id="contractCheck" ref={contract_ref} onChange={handleHasContract} defaultChecked={dataEquipment.contrato}/>
                             <label className="form-check-label" htmlFor="contractCheck">¿Con contrato?</label>
                     </div>
-                    <div className="mb-3 d-none" ref={contractVigShow_ref}>
+                    <div className={"mb-3 "+(dataEquipment.contrato ? "" : "d-none" )} ref={contractVigShow_ref}>
                         <label className="form-label">Vigencia</label>
-                        <input type="date" name="vigencia" maxLength="30" className="form-control field" ref={contractVig_ref} />
+                        <input type="date" name="vigencia" className="form-control field" ref={contractVig_ref} defaultValue={dataEquipment.contrato ? new Date(dataEquipment.vigencia).toISOString().substr(0,10) : null } />
                     </div>
 
                     <div className="d-grid">
@@ -187,4 +186,4 @@ const AddEquipmentForm = ({ match, name}) => {
     );
 }
 
-export default AddEquipment;
+export default EditEquipment;

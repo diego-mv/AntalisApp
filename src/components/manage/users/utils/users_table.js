@@ -11,7 +11,6 @@ const UsersTable = () => {
     useEffect(() => {
         Backend.get('/Accounts/getUsers', {})
         .then(_users => {
-            console.log(_users.data);
             setUsersData(_users.data);
         })
         .catch(err => {

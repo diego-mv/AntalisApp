@@ -7,13 +7,15 @@ import ManageCustomers from './components/manage/customers';
 import RegisterUser from './components/manage/users/register.jsx';
 import EditUser from './components/manage/users/edit.jsx';
 import ManageEquipment from './components/manage/customers/manageEquipment';
-
+import AddEquipment from './components/manage/customers/addEquipment';
+import EditEquipment from './components/manage/customers/editEquipment';
+import CreateRequest from './components/ot_request/CreateRequest';
 import {
   BrowserRouter as Router,
   Switch,
   Route
 } from 'react-router-dom';
-import AddEquipment from './components/manage/customers/addEquipment';
+
 
 function App() {
   return (
@@ -26,8 +28,13 @@ function App() {
         <Route exact path="/manage/users/new" component={RegisterUser} />
         <Route exact path="/manage/users/edit/:id" component={EditUser} />
         <Route exact path="/manage/customers" component={ManageCustomers} />
+        {/* Equipment */}
         <Route exact path="/manage/equipment/add/:id" component={AddEquipment} />
+        <Route exact path="/manage/equipment/edit/:id" component={EditEquipment} />
         <Route exact path="/manage/equipment/:id" component={ManageEquipment} />
+        {/* OT Request */}
+        
+        <Route exact path="/otrequest/create" component={CreateRequest} />
       </Switch>
     </Router>
   );
