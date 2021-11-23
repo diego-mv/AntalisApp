@@ -15,6 +15,7 @@ import {
   Switch,
   Route
 } from 'react-router-dom';
+import Home from './components/home';
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
     <Router>
       <Switch>
         <Route exact path="/" component={Login} />
+        <Route exact path="/home" component={Home} />
         <Route exact path="/layout" component={Layout} />
         <Route exact path="/recover" component={RecoverPassword} />
         <Route exact path="/manage/users" component={ManageUsers} />

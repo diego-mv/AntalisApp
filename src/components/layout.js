@@ -59,7 +59,7 @@ const LayoutPage = ({ content }) => {
     return (
         <div className="vh-100 sb-nav-fixed" ref={layout_wrapper}>
             <nav className="sb-topnav navbar navbar-expand navbar-dark bg-primary shadow-sm">
-                <a className="navbar-brand ps-3" href="#">
+                <a className="navbar-brand ps-3" href="/home">
                     <img src={brand} id="navbar-brand-img" height="30" className="my-auto" />
                 </a>
                 <button className="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle"

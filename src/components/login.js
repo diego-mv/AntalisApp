@@ -82,7 +82,7 @@ const LoginPage = () => {
                 localStorage.setItem('current_user', JSON.stringify(user));
             });
 
-            history.push('/layout');
+            history.push('/home');
         })
         .catch(err => {
             // alert user

@@ -30,7 +30,7 @@ const CreateRequest = () => {
 
         Backend.get('/OrdenTrabajo/GetEquipos', {
             params: {
-                IdCliente: "562f604a-10aa-4473-9b64-f02fff0967e2"
+                IdCliente: idCliente 
             }
         })
         .then( equipment => {
