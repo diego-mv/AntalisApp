@@ -43,7 +43,7 @@ const Backend = axios.create({
 
         if(data && !data.login) {
             // para todos los casos menos la request de login
-            ValidateToken(cookies.get('session_jwt', { path: '/' }))
+            ValidateToken(cookies.get('session_jwt', { path: '/'}))
                 .then(valid_token => {
                     if(!valid_token) {
                         window.location.href = '/';
