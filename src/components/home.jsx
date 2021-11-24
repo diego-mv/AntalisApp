@@ -9,36 +9,14 @@ import OverlayAlert from "./layout/utils/overlay_alert";
 import imageServicioCliente from "../img/servicio.jpg";
 
 const Home = () => {
-    const [loading, setLoading] = useState(true);
-    const [userData, setUserData] = useState({});
-
-    const getCurrentUserData = () => {
-        return new Promise(resolve => {
-            try {
-                const user = JSON.parse(localStorage.getItem('current_user'));
-                resolve({
-                    fullname: user.fullname,
-                    role : user.role});
-            } catch(e) {
-                resolve(null);
-            }
-        });
-    }
-
-    useEffect(async() => {
-        setUserData(await getCurrentUserData())
-        setLoading(false);
-    }, []);
-
-    return loading ? <LoadingContent /> : <Layout content={<HomeContent userData={userData } />} />;
+    return <Layout content={<HomeContent />} />;
 }
 
-const HomeContent = ({ userData }) => {
-
+const HomeContent = () => {
     return (
         <div className="row p-4 justify-content-center">
             {alert}
-            <h1 className="text-secondary text-center">¡Bienvenido/a <span className="text-primary">{userData.fullname}!</span></h1>
+            <h1 className="text-secondary text-center">¡Bienvenido/a <span className="text-primary"></span>!</h1>
             <div class="card col-12 col-md-5 m-3" style={{minHeight: "20rem"}}>
                 <div class="card-body">
                     <h3 class="card-title text-primary"><span className="text-secondary">Video:</span> ¿Sabía qué?</h3>

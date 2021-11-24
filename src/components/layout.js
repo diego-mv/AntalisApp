@@ -53,6 +53,7 @@ const LayoutPage = ({ content }) => {
         cookies.remove('session_jwt', {
             path: '/'
         });
+        localStorage.removeItem("current_user");
         history.push('/');
     }
 
