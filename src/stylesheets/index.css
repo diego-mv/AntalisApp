@@ -152,3 +152,44 @@ main {
   position: absolute;
 }
 
+.h3-request{
+  font-weight: bold; 
+} 
+.h3-span-request {
+  font-size: 1.2rem;
+}
+.float-btn-request{
+  width: 10rem;
+  position: absolute;
+  right: 2rem;
+  top:60%;
+}
+.dates-request{
+  /* style={{fontWeight: "bold", position: "absolute", bottom: "1.6rem"}} */
+  font-weight: bold;
+  position: absolute;
+  bottom: 1.6rem;
+}
+@media (max-width: 760px) {
+  .h3-request{
+    font-weight: bold; 
+    font-size: 19px;
+  } 
+  .h3-span-request {
+    font-size: 13px;
+  }
+  .float-btn-request{
+    width: 68px;
+    position: absolute;
+    right: 20px;
+    top:60%;
+  }
+  .dates-request{
+    /* style={{fontWeight: "bold", position: "absolute", bottom: "1.6rem"}} */
+    font-size: 11px;
+    font-weight: bold;
+    position: absolute;
+    bottom: 1.6rem;
+  }
+}
+

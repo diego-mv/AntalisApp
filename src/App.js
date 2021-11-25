@@ -17,6 +17,7 @@ import {
   Switch,
   Route
 } from 'react-router-dom';
+import OtRequest from './components/ot_request';
 
 
 
@@ -39,7 +40,7 @@ function App() {
         <Route exact path="/manage/equipment/edit/:id" component={EditEquipment} />
         <Route exact path="/manage/equipment/:id" component={ManageEquipment} />
         {/* OT Request */}
-        
+        <Route exact path="/otrequest" component={OtRequest} />
         <Route exact path="/otrequest/create" component={CreateRequest} />
       </Switch>
     </Router>

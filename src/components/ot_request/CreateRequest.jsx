@@ -12,27 +12,8 @@ const CreateRequest = () => {
     const [loading, setLoading] = useState(true);
     const [equipmentUser, setEquipmentUser] = useState([]);
 
-    const getCurrentUserId = () => {
-        return new Promise(resolve => {
-            try {
-                const user = JSON.parse(localStorage.getItem('current_user'));
-                resolve(user.id);
-            } catch(e) {
-                resolve(null);
-            }
-        });
-    }
-
     useEffect(() => {
-        const idCliente = getCurrentUserId().then(id => {
-            if(id) return id;
-        });
-
-        Backend.get('/OrdenTrabajo/GetEquipos', {
-            params: {
-                IdCliente: idCliente 
-            }
-        })
+        Backend.get('/OrdenTrabajo/GetMyEquipos', {})
         .then( equipment => {
             setEquipmentUser(equipment.data.data.map(e => {
                 return {
@@ -40,7 +21,6 @@ const CreateRequest = () => {
                     label: "Marca: "+e.marca+" | Modelo: "+e.modelo+" | Serie: "+e.serie,
                 }
             }));
-            console.log(equipmentUser)
             setLoading(false);
         })
         .catch(err => {
@@ -64,7 +44,7 @@ const CreateRequestForm = ({ equipmentUser }) => {
         });
     }
 
-    const submitEquipment = (event) => {
+    const submitRequest = (event) => {
         event.preventDefault();
         trimFields();
 
@@ -102,10 +82,12 @@ const CreateRequestForm = ({ equipmentUser }) => {
         }
 
         Backend.post('/OrdenTrabajo/CreateSolicitud', {
-            descripcion: description_ref,
+            descripcion: description_ref.current.value,
             equipoId: equipmentId_ref.current.getValue()[0].value
         })
         .then(res => {
+            description_ref.current.value = ""
+
             setAlert(<OverlayAlert
                 variant="success"
                 message="La solicitud ha sido ingresada con éxito."
@@ -130,7 +112,7 @@ const CreateRequestForm = ({ equipmentUser }) => {
                     Volver atrás
                 </a>
             </div>
-            <div className="card p-4 bg-white mx-auto" style={{maxWidth: '60rem',minHeight: '30rem'}}>
+            <div className="card p-4 bg-white mx-auto" style={{maxWidth: '60rem'}}>
                 <div className="px-2">
                     <h4 className="mb-0">
                         <FontAwesomeIcon icon={faFolderPlus} className="me-2" />
@@ -140,16 +122,16 @@ const CreateRequestForm = ({ equipmentUser }) => {
 
                 <hr className="my-3" />
 
-                <form onSubmit={submitEquipment}>
+                <form onSubmit={submitRequest}>
                     <div className="mb-3">
                         <label className="form-label">Seleccione el equipo asociado a la solicitud</label>
-                        <Select options={equipmentUser} styles={customStyleSelect}  ref={equipmentId_ref} required
+                        <Select options={equipmentUser} styles={customStyleSelect}  ref={equipmentId_ref}
                             placeholder={'Seleccione...'} isSearchable={true} noOptionsMessage={() => 'Sin resultados'}
                         />
                     </div>
                     <div className="form-group mb-4">
-                        <label htmlFor="description">Descripción</label>
-                        <textarea className="form-control" id="description" rows="3" ref={description_ref} required></textarea>
+                        <label className="mb-3" htmlFor="description">Descripción</label>
+                        <textarea className="form-control" id="description" rows="6" ref={description_ref}></textarea>
                     </div>                    
                     <div className="d-grid">
                         <input type="submit" className="btn btn-primary" value="Confirmar" />

@@ -1,12 +1,7 @@
-import { faFolderPlus } from "@fortawesome/free-solid-svg-icons";
 import { faFacebook, faLinkedin, faTwitter, faInstagram } from "@fortawesome/free-brands-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import Layout from "./layout";
-import LoadingContent from "./layout/loading_content";
-import Backend from "./backend";
-import OverlayAlert from "./layout/utils/overlay_alert";
-import imageServicioCliente from "../img/servicio.jpg";
 
 const Home = () => {
     return <Layout content={<HomeContent />} />;
@@ -55,10 +50,10 @@ const HomeContent = () => {
                     <h6 class="card-subtitle mb-2 text-muted">En nuestras redes sociales</h6>
                     
                     <div className="mt-5" style={{width:"100%", textAlign: "center", lineHeight: "100px"}}>
-                        <a href="https://www.linkedin.com/company/antalis/" target="_blank" className="card-link text-secondary"><FontAwesomeIcon size="3x" icon={faLinkedin} /></a>
-                        <a href="https://twitter.com/Antalischile" target="_blank" className="card-link text-secondary"><FontAwesomeIcon size="3x" icon={faTwitter} /></a>
-                        <a href="https://www.facebook.com/AntalisChile/" target="_blank" className="card-link text-secondary"><FontAwesomeIcon size="3x" icon={faFacebook} /></a>
-                        <a href="https://www.instagram.com/antalischile/?hl=es" target="_blank" className="card-link text-secondary"><FontAwesomeIcon size="3x" icon={faInstagram} /></a>
+                        <a href="https://www.linkedin.com/company/antalis/" target="_blank" rel="noreferrer" className="card-link text-secondary"><FontAwesomeIcon size="3x" icon={faLinkedin} /></a>
+                        <a href="https://twitter.com/Antalischile" target="_blank" rel="noreferrer" className="card-link text-secondary"><FontAwesomeIcon size="3x" icon={faTwitter} /></a>
+                        <a href="https://www.facebook.com/AntalisChile/" target="_blank" rel="noreferrer" className="card-link text-secondary"><FontAwesomeIcon size="3x" icon={faFacebook} /></a>
+                        <a href="https://www.instagram.com/antalischile/?hl=es" target="_blank" rel="noreferrer" className="card-link text-secondary"><FontAwesomeIcon size="3x" icon={faInstagram} /></a>
                     </div>
                    
                 </div>
