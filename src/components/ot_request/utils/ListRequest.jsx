@@ -1,6 +1,3 @@
-import React, { useState, useEffect, useRef } from "react";
-import { faInfo } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import moment from "moment";
 import "moment/locale/es-mx"
 

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Layout from "../../layout";
 import Backend from "../../backend";
 import EquipmentTable from "./utils/equipment_table";
+import ButtonBack from "../../layout/ButtonBack";
 
 const ManageEquipment = ({match}) => {
     const [nameCustomer, setNameCustomer] = useState("");
@@ -37,10 +38,7 @@ const ManageEquipmentContent = ({name, match}) => {
                     Gestionar equipos: <span className="text-primary">{name}</span>
                 </h4>
                 <div className="my-2">
-                <a className="link-primary" href="/manage/customers">
-                    <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
-                    Volver atrás
-                </a>
+                <ButtonBack to="/manage/customers"/>
             </div>
             </div>
 

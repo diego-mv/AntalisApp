@@ -1,23 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { getCurrentUser } from "../../helpers/getData";
 
-const getFullName = () => {
-    return new Promise(resolve => {
-        try {
-            const user = JSON.parse(localStorage.getItem('current_user'));
-            resolve(user.fullname);
-        } catch(e) {
-            resolve(null);
-        }
-    });
-}
 
 const LoggedAs = () => {
     const [username, setUsername] = useState('Usuario');
 
     useEffect(() => {
-        getFullName().then(fullName => {
-            if(fullName) setUsername(fullName);
-        });
+        setUsername(getCurrentUser().fullname);
     }, []);
 
     return (

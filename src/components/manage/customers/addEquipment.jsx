@@ -6,6 +6,7 @@ import LoadingContent from "../../layout/loading_content";
 import Backend from "../../backend";
 import OverlayAlert from "../../layout/utils/overlay_alert";
 import { useHistory } from "react-router";
+import ButtonBack from "../../layout/ButtonBack";
 
 const AddEquipment = ({ match }) => {
     const [loading, setLoading] = useState(true);
@@ -139,10 +140,7 @@ const AddEquipmentForm = ({ match, name}) => {
         <div>
             {alert}
             <div className="my-2">
-                <a className="link-primary" href="/manage/customers">
-                    <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
-                    Volver atrás
-                </a>
+                <ButtonBack to="/manage/customers"/>
             </div>
             <div className="card p-4 bg-white mx-auto" style={{maxWidth: '30rem'}}>
                 <div className="px-2">

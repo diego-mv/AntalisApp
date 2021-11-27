@@ -7,6 +7,7 @@ import Backend from "../../backend";
 import Select from "react-select";
 import customStyleSelect from "../../layout/utils/custom_style_select";
 import OverlayAlert from "../../layout/utils/overlay_alert";
+import ButtonBack from "../../layout/ButtonBack";
 
 const RegisterUser = () => {
     const [loading, setLoading] = useState(true);
@@ -276,10 +277,7 @@ const RegisterUserForm = ({ roles }) => {
         <div>
             {alert}
             <div className="my-2">
-                <a className="link-primary" href="/manage/users">
-                    <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
-                    Volver atrás
-                </a>
+                <ButtonBack to="/manage/users"/>
             </div>
             <div className="card p-4 bg-white mx-auto" style={{maxWidth: '24rem'}}>
                 <div className="px-2">

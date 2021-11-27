@@ -1,14 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
-import {  useLocation } from "react-router-dom";
-import Cookies from "universal-cookie";
+import React, { useState, useRef } from "react";
 import { useHistory } from "react-router";
-import { ValidateToken } from "./backend";
-import Loading from "./loading";
-import logo from '../img/antalis-logo-white.png';
+import logo from '../../img/antalis-logo-white.png';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
-import OverlayAlert from "./layout/utils/overlay_alert";
-import BackendWithoutAuth from "./backendWithoutAuth";
+import OverlayAlert from "../layout/utils/overlay_alert";
+import BackendWithoutAuth from "../backendWithoutAuth";
 
 const RecuperatePassword = () => {
 // 3) One liner - Get query string with '&' and without any library

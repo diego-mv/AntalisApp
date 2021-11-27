@@ -193,3 +193,79 @@ main {
   }
 }
 
+.text-bold{
+  font-weight: bold;
+}
+
+#notfound{
+  position: relative;
+  height: 80vh;
+  padding: 0;
+  margin: 0;
+}
+
+#notfound .notfound{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.notfound{
+  max-width: 520px;
+  width: 100%;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.notfound404{
+  position: relative;
+  height: 240px;
+}
+
+.notfound .notfound404 h3 {
+  font-family: 'Cabin', sans-serif;
+  position: relative;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #0F034E;
+  margin: 0px;
+  letter-spacing: 3px;
+  padding-left: 6px;
+}
+
+.notfound .notfound404 h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  font-size: 252px;
+  font-weight: 900;
+  margin: 0px;
+  margin-left: 0px;
+  color: #f50c7d;
+  text-transform: uppercase;
+  letter-spacing: -40px;
+  margin-left: -20px;
+}
+
+.notfound .notfound404 h1 > span {
+  text-shadow: -8px 0px 0px #fff;
+}
+
+.notfound h2 {
+  font-family: 'Cabin', sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #0F034E;
+  margin-top: 0px;
+  margin-bottom: 25px;
+}

@@ -7,6 +7,7 @@ import Backend from "../backend";
 import Select from "react-select";
 import customStyleSelect from "../layout/utils/custom_style_select";
 import OverlayAlert from "../layout/utils/overlay_alert";
+import ButtonBack from "../layout/ButtonBack";
 
 const CreateRequest = () => {
     const [loading, setLoading] = useState(true);
@@ -107,10 +108,7 @@ const CreateRequestForm = ({ equipmentUser }) => {
         <div>
             {alert}
             <div className="my-2">
-                <a className="link-primary" href="/layout">
-                    <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
-                    Volver atrás
-                </a>
+                <ButtonBack to="/home"/>
             </div>
             <div className="card p-4 bg-white mx-auto" style={{maxWidth: '60rem'}}>
                 <div className="px-2">

@@ -2,6 +2,7 @@ import { faEdit, faSearch, faSortAmountUp, faSortAmountDown, faUserMinus, faUser
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState, useEffect } from "react";
 import { Table, Badge, Pagination, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import Backend from "../../../backend";
 import LoadingContent from "../../../layout/loading_content";
 
@@ -101,11 +102,9 @@ const EquipmentTableContent = ({ equipmentData, match }) => {
     return (
         <div>
             <div className="d-flex justify-content-between mb-3">
-                <a href={'/manage/equipment/add/' + match.params.id} className="btn btn-primary">
-                    <FontAwesomeIcon icon={faPlus} />
+                <Link to={'/manage/equipment/add/' + match.params.id} className="btn btn-primary"><FontAwesomeIcon icon={faPlus} />
                     <span className="d-none d-md-inline ms-2">Nuevo</span>
-                </a>
-
+                </Link>
                 <div style={{width: '12rem'}}>
                     <div className="input-group">
                         <span className="input-group-text">
@@ -167,11 +166,9 @@ const EquipmentTableContent = ({ equipmentData, match }) => {
                                 <td className="text-center">
                                     <OverlayTrigger placement="left"
                                         overlay={<Tooltip>Editar Equipo</Tooltip>}>
-
-                                        <a className="btn btn-outline-secondary text-center me-2"
-                                            href={'/manage/equipment/edit/' + equipment.id}>
+                                        <Link className="btn btn-outline-secondary text-center me-2" to={'/manage/equipment/edit/' + equipment.id}> 
                                             <FontAwesomeIcon icon={faEdit} />
-                                        </a>
+                                        </Link>
                                     </OverlayTrigger>
                                 </td>
                             </tr>

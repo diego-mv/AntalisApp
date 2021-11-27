@@ -2,6 +2,7 @@ import { faEdit, faSearch, faSortAmountUp, faSortAmountDown, faUserMinus, faUser
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState, useEffect } from "react";
 import { Table, Badge, Pagination, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import Backend from "../../../backend";
 import LoadingContent from "../../../layout/loading_content";
 
@@ -97,10 +98,8 @@ const UsersTableContent = ({ customersData }) => {
     return (
         <div>
             <div className="d-flex justify-content-between mb-3">
-                <a href="/manage/users/new" className="btn btn-primary">
-                    <FontAwesomeIcon icon={faUserPlus} />
-                    <span className="d-none d-md-inline ms-2">Nuevo</span>
-                </a>
+                <Link to="/manage/users/new" className="btn btn-primary"><FontAwesomeIcon icon={faUserPlus} />
+                    <span className="d-none d-md-inline ms-2">Nuevo</span></Link>
 
                 <div style={{width: '12rem'}}>
                     <div className="input-group">
@@ -163,27 +162,15 @@ const UsersTableContent = ({ customersData }) => {
                                 <td className="text-center">
                                     <OverlayTrigger placement="left"
                                         overlay={<Tooltip>Agregar Equipo</Tooltip>}>
-
-                                        <a className="btn btn-outline-secondary text-center me-2"
-                                            href={'/manage/equipment/add/' + user.id}>
-                                            <FontAwesomeIcon icon={faPlus} />
-                                        </a>
+                                        <Link className="btn btn-outline-secondary text-center me-2" to={'/manage/equipment/add/' + user.id}><FontAwesomeIcon icon={faPlus} /></Link>
                                     </OverlayTrigger>
                                     <OverlayTrigger placement="left"
                                         overlay={<Tooltip>Ver Equipos</Tooltip>}>
-
-                                        <a className="btn btn-outline-secondary text-center me-2"
-                                            href={'/manage/equipment/' + user.id}>
-                                            <FontAwesomeIcon icon={faListAlt} />
-                                        </a>
+                                        <Link className="btn btn-outline-secondary text-center me-2" to={'/manage/equipment/' + user.id}><FontAwesomeIcon icon={faListAlt} /></Link>
                                     </OverlayTrigger>
                                     <OverlayTrigger placement="left"
                                         overlay={<Tooltip>Editar usuario</Tooltip>}>
-
-                                        <a className="btn btn-outline-secondary text-center me-2"
-                                            href={'/manage/users/edit/' + user.id}>
-                                            <FontAwesomeIcon icon={faEdit} />
-                                        </a>
+                                        <Link className="btn btn-outline-secondary text-center me-2" to={'/manage/users/edit/' + user.id}><FontAwesomeIcon icon={faEdit} /></Link>
                                     </OverlayTrigger>
 
                                 </td>

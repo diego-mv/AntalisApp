@@ -15,6 +15,26 @@ import SidebarCoordinador from './layout/sidebars/coordinador';
 import SidebarAnalista from './layout/sidebars/analista';
 import SidebarAdmin from './layout/sidebars/admin';
 import LoadingContent from './layout/loading_content';
+import { getCurrentRole } from '../helpers/getData';
+import { NavLink } from 'react-router-dom';
+
+
+const switchSideBar = (role) => {
+    switch (role) {
+        case "Admin":
+            return <SidebarAdmin/>;    
+        case "Analista":
+            return <SidebarAnalista/>;   
+        case "Cliente":
+            return <SidebarCliente/>;   
+        case "Coordinador":
+            return <SidebarCoordinador/>;   
+        case "Tecnico":
+            return <SidebarTecnico/>;   
+        default:
+            return null;
+    }
+}
 
 const Layout = ({ content }) => {
     const history = useHistory();
@@ -36,18 +56,13 @@ const LayoutPage = ({ content }) => {
     const layout_wrapper = useRef();
     const cookies = new Cookies();
     const history = useHistory();
-
+    const currentRole = getCurrentRole();
     const sidebarToggle = e => {
         e.preventDefault();
         layout_wrapper.current.classList.toggle('sb-sidenav-toggled');
         localStorage.setItem('sb|sidebar-toggle', layout_wrapper.current.classList.contains('sb-sidenav-toggled'));
     }
-
-    // useEffect(() => {
-    //     if (localStorage.getItem('sb|sidebar-toggle') === 'true') {
-    //         layout_wrapper.current.classList.toggle('sb-sidenav-toggled');
-    //     }
-    // });
+    
 
     const handleLogout = () => {
         cookies.remove('session_jwt', {
@@ -60,9 +75,9 @@ const LayoutPage = ({ content }) => {
     return (
         <div className="vh-100 sb-nav-fixed" ref={layout_wrapper}>
             <nav className="sb-topnav navbar navbar-expand navbar-dark bg-primary shadow-sm">
-                <a className="navbar-brand ps-3" href="/home">
+                <NavLink className="navbar-brand ps-3" to="/home">
                     <img src={brand} id="navbar-brand-img" height="30" className="my-auto" />
-                </a>
+                </NavLink>
                 <button className="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle"
                     onClick={sidebarToggle} href="#!">
                     <FontAwesomeIcon icon={faBars} className="text-white" />
@@ -74,7 +89,7 @@ const LayoutPage = ({ content }) => {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
-                        <Dropdown.Item>
+                        <Dropdown.Item href="/configureaccount">
                             <FontAwesomeIcon icon={faUserCog} className="me-1" />
                             Configuración de cuenta
                         </Dropdown.Item>
@@ -90,7 +105,7 @@ const LayoutPage = ({ content }) => {
                     <nav className="sb-sidenav accordion sb-sidenav-dark bg-secondary" id="sidenavAccordion">
                         <div className="sb-sidenav-menu">
                             <div className="nav">
-                                <SidebarAdmin />
+                                {switchSideBar(currentRole)}
                             </div>
                         </div>
                         <div className="sb-sidenav-footer" id="logged-as">

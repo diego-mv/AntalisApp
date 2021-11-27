@@ -1,21 +1,19 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useHistory } from "react-router";
-import logo from '../img/antalis-logo-white.png';
+import React, { useState, useRef } from "react";
+import logo from '../../img/antalis-logo-white.png';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faKey } from "@fortawesome/free-solid-svg-icons";
-import OverlayAlert from "./layout/utils/overlay_alert";
-import BackendWithoutAuth from "./backendWithoutAuth";
+import OverlayAlert from "../layout/utils/overlay_alert";
+import BackendWithoutAuth from "../backendWithoutAuth";
+import { Link } from "react-router-dom";
 
 const RecoverPassword = () => {
-    const history = useHistory();
-
     return <RecoverPasswordPage />
 }
 
 const RecoverPasswordPage = () => {
     const [alert, setAlert] = useState({active: false, message: ""});
     const mail_ref = useRef();
-
+    
     const handleSubmitForgoutPass = (event) => {
         event.preventDefault();
         
@@ -63,7 +61,7 @@ const RecoverPasswordPage = () => {
 
                     <div className="d-grid">
                         <button type="submit" className="btn btn-primary mb-2">Confirmar</button>
-                        <a href="/" className="btn btn-outline-primary">Volver al inicio</a>
+                        <Link to="/" className="btn btn-outline-primary">Volver al inicio</Link>
                     </div>
                 </form>
 

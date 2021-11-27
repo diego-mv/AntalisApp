@@ -3,7 +3,7 @@ import logo from '../img/antalis-logo.png';
 import logo_white from '../img/antalis-logo-white.png';
 import Backend, { ValidateToken } from './backend';
 import Cookies from 'universal-cookie';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Loading from './loading';
 import OverlayAlert from './layout/utils/overlay_alert';
 
@@ -80,9 +80,10 @@ const LoginPage = () => {
             .then(_user => {
                 let user = _user.data;
                 localStorage.setItem('current_user', JSON.stringify(user));
+                history.push('/home');
             });
 
-            history.push('/home');
+            
         })
         .catch(err => {
             // alert user
@@ -135,7 +136,7 @@ const LoginPage = () => {
 
                         <div className="d-grid">
                             <button type="submit" className="btn btn-primary">Ingresar</button>
-                            <small className="text-white text-center">¿Olvidó su contraseña? Recupérela <a href="/recover" className="link-primary">aquí</a></small>
+                            <small className="text-white text-center">¿Olvidó su contraseña? Recupérela <Link to="/recover" className="link-primary">aquí</Link></small>
                         </div>
                     </form>
                     <div className="text-center">
