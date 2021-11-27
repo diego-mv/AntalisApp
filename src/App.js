@@ -20,6 +20,7 @@ import Home from './components/home';
 import OtRequest from './components/ot_request';
 import ConfigureAccount from './components/configureAccount';
 import NotFound from './components/layout_error/NotFound';
+import ManageTechnicals from './components/manage/technicals';
 
 
 
@@ -39,6 +40,7 @@ function App() {
         <Route exact path="/manage/users/new" component={RegisterUser} />
         <Route exact path="/manage/users/edit/:id" component={EditUser} />
         <Route exact path="/manage/customers" component={ManageCustomers} />
+        <Route exact path="/manage/technicals" component={ManageTechnicals} />
         {/* Equipment */}
         <Route exact path="/manage/equipment/add/:id" component={AddEquipment} />
         <Route exact path="/manage/equipment/edit/:id" component={EditEquipment} />

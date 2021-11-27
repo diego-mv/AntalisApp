@@ -31,6 +31,9 @@ const CreatePasswordPage = ({token, mail}) => {
     const handleSubmitForgoutPass = (event) => {
         event.preventDefault();
         setAlert({active: false, message: ""});
+        const patternPass = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*;¡ñ])(?=.{6,})");
+            
+
         let alert_required = false;
         const required_fields = [mail_ref, psw_ref, confirmPsw_ref];
         required_fields.map(field => {
@@ -46,6 +49,12 @@ const CreatePasswordPage = ({token, mail}) => {
         } 
         if(psw_ref.current.value !== confirmPsw_ref.current.value){
             setAlert({active: true, message: "La contraseña no coincide."});
+            return;
+        }
+        
+        if(!patternPass.test(confirmPsw_ref.current.value)){
+            console.log("NO")
+            setAlert({active: true, message: "La contraseña debe tener un largo mínimo de 6, tener al menos una mayuscula, una minuscula, un número y un símbolo."});
             return;
         }
 
@@ -81,7 +90,7 @@ const CreatePasswordPage = ({token, mail}) => {
                         <FontAwesomeIcon icon={faKey} className="me-2" />
                         Recuperar contraseña
                     </h5>
-
+                      
                     <div className="mb-4">
                         <label className="form-label text-white">Correo electrónico</label>
                         <input type="text" className="form-control" placeholder="ejemplo@antalis.cl" ref={mail_ref} defaultValue={mail}/>
@@ -99,7 +108,14 @@ const CreatePasswordPage = ({token, mail}) => {
                         <button type="submit" className="btn btn-primary mb-2">Confirmar</button>
                     </div>
                 </form>
-
+                <small className="text-white">La contraseña debe contener al menos:</small>
+                <ul className="text-white">
+                <li><small>Un largo mínimo de 6 carácteres</small></li>
+                            <li><small>Una letra mayúscula</small></li>
+                            <li><small>Una letra minúscula</small></li>
+                            <li><small>Un carácter especial</small></li>
+                            <li><small>Un número</small></li>
+                </ul>
                 <div className="text-center">
                     <small className="text-muted">&copy; {new Date().getFullYear()} &ndash; Antalis</small>
                 </div>

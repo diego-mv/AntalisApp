@@ -1,10 +1,74 @@
 import moment from "moment";
-import "moment/locale/es-mx"
+import "moment/locale/es-mx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {  faSearch } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useRef, useState } from "react";
+import Backend from "../../backend";
+import OverlayAlertOnLoad from "../../layout/utils/overlay_alert_onload";
+import OverlayAlert from "../../layout/utils/overlay_alert";
 
-const ListRequest = ({ requests }) => {
+const ListRequest = ({ url , parameters}) => {
+    const [requests, setRequests] = useState([]);
+    const [alert, setAlert] = useState(null);
     moment().locale('es')
+    const search_ref = useRef();
+
+    const onSearch = () => {
+        setAlert(<OverlayAlertOnLoad
+            variant="info"
+            duration="500"
+        />);
+        Backend.get(url, { 
+            params:{
+                Solicitud: search_ref.current.value
+            }
+        })
+        .then(res => {
+
+            setRequests(res.data);
+        })
+        .catch(err => {
+            console.log(err);
+            setAlert(<OverlayAlert
+                variant="danger"
+                message="Ha ocurrido un error. Intente nuevamente"
+                duration="500"
+            />);
+        });
+    };
+
+    useEffect(() => {
+        setAlert(<OverlayAlertOnLoad
+            variant="info"
+            duration="500"
+        />);
+        Backend.get(url, parameters)
+        .then(res => {
+            console.log(res.data);
+            setRequests(res.data);
+        })
+        .catch(err => {
+            console.log(err);
+            setAlert(<OverlayAlert
+                variant="danger"
+                message="Ha ocurrido un error. Intente nuevamente"
+                duration="500"
+            />);
+        });
+    
+    }, []);
+
     return (
         <div>
+            {alert}
+            <div className="w-100" style={{position: "relative"}}>
+                <div className="input-group mb-3" style={{width: "22rem" , marginRight: "0px", marginLeft: "auto"}}>
+                    <input type="text" className="form-control" placeholder="Buscar..." aria-label="Buscar" aria-describedby="buttonSearch" ref={search_ref} onKeyDown={e => e.key==="Enter" ? onSearch() : null}/>
+                    <button className="btn btn-outline-secondary" type="button" id="buttonSearch" onClick={onSearch}>
+                        <FontAwesomeIcon icon={faSearch} className="" />
+                    </button>
+                </div>
+            </div>
             {requests.map((request)=>(
                 <div className="card mb-4" style={{minHeight:"15rem"}} key={request.id}>
                     <div className="card-body" style={{position: "relative"}}>

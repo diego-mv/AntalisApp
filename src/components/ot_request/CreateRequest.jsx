@@ -112,7 +112,7 @@ const CreateRequestForm = ({ equipmentUser }) => {
             </div>
             <div className="card p-4 bg-white mx-auto" style={{maxWidth: '60rem'}}>
                 <div className="px-2">
-                    <h4 className="mb-0">
+                    <h4 className="mb-0 text-bold">
                         <FontAwesomeIcon icon={faFolderPlus} className="me-2" />
                         Crear solicitud
                     </h4>
