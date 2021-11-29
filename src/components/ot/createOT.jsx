@@ -1,6 +1,6 @@
 import { faBriefcase, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, {useState , useEffect, Fragment} from "react";
+import React, {useState , useEffect, Fragment, useRef} from "react";
 import Layout from "../layout";
 import Backend from "../backend";
 import LoadingContent from "../layout/loading_content";
@@ -11,9 +11,12 @@ import CalendarTechnical from "./utils/CalendarTechnical";
 import { Accordion } from "react-bootstrap";
 import OverlayAlert from "../layout/utils/overlay_alert";
 import moment from "moment";
+import { TipoActividad } from "../../helpers/IdActividad";
+import ModalClientAddress from "./utils/ModalClientAddress";
 
 const CreateOT = ({match}) => {
     const [loading, setLoading] = useState(true);
+    const [regiones, setRegiones] = useState([]);
     const [technicals, setTechnicals] = useState([]);
     const [dataSolicitud, setDataSolicitud] = useState({
         contrato: "",
@@ -50,8 +53,20 @@ const CreateOT = ({match}) => {
             })
             .then(res => {
                 setDataSolicitud(res.data)
-
-                setLoading(false);
+                Backend.get('/Ubicacion/Regiones', {})
+                .then(res => {
+                    setRegiones(res.data.map(region => {
+                        return {
+                            value: region.id,
+                            label: region.name
+                        }
+                    }));
+                    setLoading(false);
+                })
+                .catch(err => {
+                    console.log(err);
+                    setLoading(false);
+                });
             })
             .catch(err => {
                 console.log(err);
@@ -64,19 +79,57 @@ const CreateOT = ({match}) => {
         });
     }, []);
     
-    return loading ? <LoadingContent /> : <Layout content={<CreateOTContent technicals={technicals} dataSolicitud={dataSolicitud}/>} />;
+    return loading ? <LoadingContent /> : <Layout content={<CreateOTContent technicals={technicals} dataSolicitud={dataSolicitud} regiones={regiones}/>} />;
 }
 
-const CreateOTContent = ({technicals, dataSolicitud}) => {
+const CreateOTContent = ({technicals, dataSolicitud, regiones}) => {
+    const [showModal, setShowModal] = useState(false);
+    const [comunas, setComunas] = useState([]);
     const [technicalAsiggned, setTechnicalAssigned] = useState("");
     const [alert, setAlert] = useState(null);
+    
+    const otRegion_ref = useRef();
+    const otComuna_ref = useRef();
+    const otCalle_ref = useRef();
 
-    const HandleTechnical = (e) => {
-        setTechnicalAssigned(e.value);
+    const updateAddress = (regionId, comunaId, calle) => {
+        otCalle_ref.current.value = calle;
+        otRegion_ref.current.selectOption( regiones.find( reg => {if(reg.value === regionId){return reg}}))
+    }
+
+    const handleTechnicalAssigned = (e) => {
+        setTechnicalAssigned("");
+        setTechnicalAssigned(e.value)
+    }
+
+    const handleRegionChange = (event) => {
+        setComunas([]);
+        otComuna_ref.current.clearValue();
+        Backend.get('/Ubicacion/Comunas', {
+            params: {
+                IdRegion: event.value
+            }
+        })
+        .then(res => {
+            setComunas(res.data.map(comuna => {
+                return {
+                    value: comuna.id,
+                    label: comuna.name
+                }
+            }));
+            
+        })
+        .catch(err => {
+            console.log(err);
+        });
     }
 
     const SubmitCreateOT = (e) => {
         e.preventDefault();
+        console.log("region", otRegion_ref.current.getValue()[0].value, otRegion_ref.current.getValue()[0].label)
+        console.log("comuna", otComuna_ref.current.getValue()[0].value, otComuna_ref.current.getValue()[0].label)
+        console.log(otCalle_ref.current.value);
+
         setAlert(
                 <OverlayAlert
                     variant="success"
@@ -95,7 +148,7 @@ const CreateOTContent = ({technicals, dataSolicitud}) => {
                     <div className="px-2">
                         <h4 className="mb-0 text-bold">
                             <FontAwesomeIcon icon={faBriefcase} className="me-2" />
-                            Crear orden de trabajo
+                            Generar orden de trabajo
                         </h4>
                     </div>
                     <hr className="my-3" />
@@ -127,6 +180,12 @@ const CreateOTContent = ({technicals, dataSolicitud}) => {
                                             <span className="text-bold">Descripción: </span><br/>
                                             {dataSolicitud.descripcion}
                                         </div>
+                                        <a className="btn btn-primary" onClick={() => setShowModal(true)}>Ver direcciones del cliente</a>
+                                        
+                                        <ModalClientAddress show={showModal} onHide={() => setShowModal(false)} 
+                                                            idClient={dataSolicitud.idCliente} 
+                                                            updateAddress={updateAddress}/>
+
                                     </Accordion.Body>
                                 </Accordion.Item>
                             </Accordion>
@@ -135,14 +194,16 @@ const CreateOTContent = ({technicals, dataSolicitud}) => {
                             <label className="form-label">Tipo de actividad</label>
                             <select className="form-select">
                                 <option defaultValue>Seleccione el tipo de actividad...</option>
-                                <option value="1">Actividad 1</option>
-                                <option value="2">Actividad 2</option>
-                                <option value="3">Actividad 3</option>
+                                {
+                                    TipoActividad.map( (act) => (
+                                        <option value={act.value}>{act.label}</option>
+                                    ))
+                                }
                             </select>
                         </div>
                         <div className="mb-3">
                             <label className="form-label">Técnico</label>
-                            <Select options={technicals} styles={customStyleSelect} onChange={HandleTechnical}
+                            <Select options={technicals} styles={customStyleSelect} onChange={handleTechnicalAssigned}
                                 placeholder={'Seleccione un tecnico para ver su agenda'} isSearchable={true} noOptionsMessage={() => 'Sin resultados'}
                             />
                         </div>
@@ -168,8 +229,26 @@ const CreateOTContent = ({technicals, dataSolicitud}) => {
                                 <option value="2">Tarde</option>
                             </select>
                         </div>
+
+                        <p className="mt-2 text-bold">Dirección</p><hr/>
+                        <div className="mb-3">
+                            <label className="form-label">Región</label>
+                            <Select options={regiones} styles={customStyleSelect} onChange={handleRegionChange}
+                                placeholder={'Seleccione una región...'} isSearchable={true} noOptionsMessage={() => 'Sin resultados'} ref={otRegion_ref}
+                            />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Comuna</label>
+                            <Select options={comunas} styles={customStyleSelect} noOptionsMessage={() => 'Sin resultados'} ref={otComuna_ref}
+                                placeholder={'Seleccione una comuna'} isSearchable={true} />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Calle</label>
+                            <input type="text" maxLength="50" placeholder="ej: Calle 137" className="form-control field" ref={otCalle_ref}/>
+                        </div>
+
                         <div className="d-grid gap-2 mb-3 mt-4">
-                            <button className="btn btn-primary">Crear OT</button>
+                            <button className="btn btn-primary">Generar OT</button>
                         </div>
                     </form>
                 </div>                

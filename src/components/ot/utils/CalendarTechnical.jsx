@@ -7,37 +7,37 @@ import moment from "moment";
 import "moment/locale/es-mx";
 import LoadingCalendar from "./LoadingCalendar";
 import { Accordion } from "react-bootstrap";
+import Backend from "../../backend";
 
 const CalendarTechnical = ({technicalId}) => {
     const [loading, setLoading] = useState(true);
-
-    
-    const myEventsList = [
-        {
-          title: "HP Model 12345",
-          start: new Date("2021/11/28 10:22:00"),
-          end: new Date("2021/11/28 12:22:00"),
-        },
-        {
-          title: "EPSON Model 12345",
-          start: new Date("2021/11/30 10:22:00"),
-          end: new Date("2021/11/30 12:22:00"),
-        },
-        {
-          title: "Intel Model 12345",
-          start: new Date("2021/11/30 12:30:00"),
-          end: new Date("2021/11/30 17:22:00"),
-        },
-      ];
+    const [events, setEvents] = useState([]);
 
     useEffect(() => {
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000)
+      setLoading(true);
+      Backend.get('/OrdenTrabajo/getPendingOTTecnico', {
+        params:{
+          IdTecnico: technicalId
+        }
+      })
+      .then(res => {
+          setEvents(res.data.data.map(ot=> {
+            return {
+              title: `${ot.clienteFullname} ${ot.comuna} ${ot.calle}`,
+              start: ot.fechaVisita,
+              end: ot.fechaVisita,
+            }
+          }))
+          setLoading(false);
+      })
+      .catch(err => {
+          console.log(err);
+          setLoading(false);
+      });
 
-    }, []);
+    }, [technicalId]);
     
-    return loading ? <LoadingCalendar/> : <CalendarContent myEventsList={myEventsList}/>;
+    return loading ? <LoadingCalendar/> : <CalendarContent myEventsList={events}/>;
 }
 
 const CalendarContent = ({myEventsList}) => {
