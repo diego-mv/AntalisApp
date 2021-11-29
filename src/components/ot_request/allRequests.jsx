@@ -1,47 +1,28 @@
-import { faFolderOpen } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, {useState , useEffect} from "react";
+import React from "react";
 import Layout from "../layout";
 import ListRequest from "./utils/ListRequest";
-import Backend from "../backend";
-import LoadingContent from "../layout/loading_content";
 
-const OtRequest = () => {
-    const [loading, setLoading] = useState(true);
-    const [requests, setRequests] = useState([]);
-
+const AllRequest = () => {
     
-
-    useEffect(() => {
-        Backend.get('/OrdenTrabajo/MisSolicitudes', {
-
-        })
-        .then(equipment => {
-            setRequests(equipment.data);
-            setLoading(false);
-        })
-        .catch(err => {
-            console.log(err);
-        });
-    
-    }, []);
-    return loading ? <LoadingContent /> : <Layout content={<OtRequestContent requests={requests} />} />;
+    return <Layout content={<OtRequestContent/>} />;
 }
 
-const OtRequestContent = ({requests}) => {
+const OtRequestContent = () => {
     return (
         <div className="card p-3 bg-white mx-auto" style={{minHeight: '20rem', minWidth: '20rem', maxWidth: "80rem"}}>
             <div className="px-2">
-                <h4 className="mb-0">
-                    <FontAwesomeIcon icon={faFolderOpen} className="me-2" />
-                    Mis solicitudes
+                <h4 className="mb-0 text-bold">
+                    <FontAwesomeIcon icon={faClock} className="me-2" />
+                    Solicitudes de OT
                 </h4>
             </div>
 
             <hr className="my-3" />
-            <ListRequest requests={requests}/>
+             <ListRequest url='/OrdenTrabajo/pendingSolicitudes' parameters={{}}/> 
         </div>
     );
 }
 
-export default OtRequest;
+export default AllRequest;

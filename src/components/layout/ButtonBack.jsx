@@ -20,7 +20,7 @@ const ButtonBack = ({to}) => {
     }
 
     return (
-        <Link to={to} className="link-primary">
+        <Link to={to} className="btn btn-primary mb-2">
             <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
             Volver atrás
         </Link>

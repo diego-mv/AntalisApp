@@ -10,7 +10,7 @@ const SidebarCoordinador = () => {
     return (
         <>
             <div className="sb-sidenav-menu-heading">ÓRDENES DE TRABAJO</div>
-            <NavLink className="nav-link" to="/">
+            <NavLink className="nav-link" to="/otrequest/pending">
                 <div className="sb-nav-link-icon"><FontAwesomeIcon icon={faToolbox} /></div>
                 Solicitudes de OT
             </NavLink>

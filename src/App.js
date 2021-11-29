@@ -21,6 +21,8 @@ import OtRequest from './components/ot_request';
 import ConfigureAccount from './components/configureAccount';
 import NotFound from './components/layout_error/NotFound';
 import ManageTechnicals from './components/manage/technicals';
+import AllRequest from './components/ot_request/allRequests';
+import CreateOT from './components/ot/createOT';
 
 
 
@@ -46,8 +48,12 @@ function App() {
         <Route exact path="/manage/equipment/edit/:id" component={EditEquipment} />
         <Route exact path="/manage/equipment/:id" component={ManageEquipment} />
         {/* OT Request */}
+        <Route exact path="/otrequest/pending" component={AllRequest} />
         <Route exact path="/otrequest" component={OtRequest} />
         <Route exact path="/otrequest/create" component={CreateRequest} />
+        {/* OT */}
+        <Route exact path="/ot/create/:idrequest" component={CreateOT} />
+
         <Route component={NotFound} />
       </Switch>
     </Router>

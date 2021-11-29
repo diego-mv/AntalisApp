@@ -2,7 +2,7 @@ import { faFolderOpen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, {useState , useEffect} from "react";
 import Layout from "../layout";
-import ListRequest from "./utils/ListRequest";
+import ListRequestClient from "./utils/ListRequestClient";
 import Backend from "../backend";
 import LoadingContent from "../layout/loading_content";
 
@@ -22,7 +22,7 @@ const OtRequestContent = () => {
             </div>
 
             <hr className="my-3" />
-            <ListRequest url='/OrdenTrabajo/MisSolicitudes' parameters={{}}/>
+            <ListRequestClient url='/OrdenTrabajo/MisSolicitudes' parameters={{}}/>
         </div>
     );
 }
