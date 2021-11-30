@@ -8,11 +8,11 @@ import ButtonBack from "../layout/ButtonBack";
 import Select from "react-select";
 import customStyleSelect from "../layout/utils/custom_style_select";
 import CalendarTechnical from "./utils/CalendarTechnical";
-import { Accordion } from "react-bootstrap";
 import OverlayAlert from "../layout/utils/overlay_alert";
-import moment from "moment";
 import { TipoActividad } from "../../helpers/IdActividad";
-import ModalClientAddress from "./utils/ModalClientAddress";
+import AccordionDataRequest from "./utils/accordionDataRequest";
+import { requiredSelect } from "../../helpers/requiredSelect";
+import moment from "moment";
 
 const CreateOT = ({match}) => {
     const [loading, setLoading] = useState(true);
@@ -87,56 +87,93 @@ const CreateOTContent = ({technicals, dataSolicitud, regiones}) => {
     const [comunas, setComunas] = useState([]);
     const [technicalAsiggned, setTechnicalAssigned] = useState("");
     const [alert, setAlert] = useState(null);
-    
-    const otRegion_ref = useRef();
-    const otComuna_ref = useRef();
-    const otCalle_ref = useRef();
+    const horarios = [
+        {
+            label: "Mañana", 
+            value: "AM",
+        },
+        {
+            label: "Tarde", 
+            value: "PM",
+        }
+    ]    
 
-    const updateAddress = (regionId, comunaId, calle) => {
-        otCalle_ref.current.value = calle;
-        otRegion_ref.current.selectOption( regiones.find( reg => {if(reg.value === regionId){return reg}}))
-    }
+    const actividad_ref = useRef();
+    const tecnico_ref = useRef();
+    const diaVisita_ref = useRef();
+    const horario_ref = useRef();
+    const tiempoSLA_ref = useRef();
 
     const handleTechnicalAssigned = (e) => {
         setTechnicalAssigned("");
         setTechnicalAssigned(e.value)
     }
 
-    const handleRegionChange = (event) => {
-        setComunas([]);
-        otComuna_ref.current.clearValue();
-        Backend.get('/Ubicacion/Comunas', {
-            params: {
-                IdRegion: event.value
-            }
-        })
-        .then(res => {
-            setComunas(res.data.map(comuna => {
-                return {
-                    value: comuna.id,
-                    label: comuna.name
-                }
-            }));
-            
-        })
-        .catch(err => {
-            console.log(err);
-        });
-    }
-
     const SubmitCreateOT = (e) => {
         e.preventDefault();
-        console.log("region", otRegion_ref.current.getValue()[0].value, otRegion_ref.current.getValue()[0].label)
-        console.log("comuna", otComuna_ref.current.getValue()[0].value, otComuna_ref.current.getValue()[0].label)
-        console.log(otCalle_ref.current.value);
+        console.log(actividad_ref.current.value)
+        let alert_required = false;
 
-        setAlert(
+        requiredSelect(tecnico_ref, alert_required);
+        requiredSelect(actividad_ref, alert_required);
+        requiredSelect(horario_ref, alert_required);
+
+        const required_fields = [diaVisita_ref];
+        required_fields.map(field => {
+            field.current.classList.remove('required-field');
+            if(!field.current.value) {
+                alert_required = true;
+                field.current.classList.add('required-field');
+            }
+        });
+
+        if(alert_required) {
+            setAlert(
+                <OverlayAlert
+                    variant="danger"
+                    message="Debes llenar los campos requeridos"
+                    duration="3000"
+                />
+            );
+            return;
+        }
+        if(isNaN(tiempoSLA_ref.current.value)){
+            setAlert(
+                <OverlayAlert
+                    variant="danger"
+                    message="Tiempo SLA debe ser numérico"
+                    duration="3000"
+                />
+            );
+            return;
+        }
+
+        Backend.post('/OrdenTrabajo/createOT', {
+            solicitudId: dataSolicitud.id,
+            tecnicoId: tecnico_ref.current.getValue()[0].value,
+            tipoActividadId: actividad_ref.current.getValue()[0].value,
+            fechaVisita: diaVisita_ref.current.value,
+            horario: horario_ref.current.getValue()[0].value,
+            tiempo: tiempoSLA_ref.current.value
+        })
+        .then(res => {
+            setAlert(
                 <OverlayAlert
                     variant="success"
                     message="Orden de trabajo ingresada con éxito"
                     duration="3000"
                 />
-            );
+            );            
+        })
+        .catch(err => {
+            setAlert(<OverlayAlert
+                variant="danger"
+                message="Ocurrió un error al ingresar la OT. Por favor intente nuevamente más tarde"
+                duration="3000"
+            />);
+        });
+
+        
     }
 
     return (
@@ -154,56 +191,27 @@ const CreateOTContent = ({technicals, dataSolicitud, regiones}) => {
                     <hr className="my-3" />
                     <form className="row m-4" onSubmit={SubmitCreateOT}>
                         <div className="mb-3">
-                            <Accordion>
-                                <Accordion.Item eventKey="0">
-                                    <Accordion.Header><span className="text-bold"><FontAwesomeIcon icon={faInfoCircle} className="me-2" /> Datos solicitud</span></Accordion.Header>
-                                    <Accordion.Body>
-                                        <div className="mb-2">
-                                            <span className="text-bold">Cliente: </span> {dataSolicitud.fullnameCliente} (<a href={`mailto:${dataSolicitud.emailCliente}`}>{dataSolicitud.emailCliente}</a>)
-                                        </div>
-                                        <div className="mb-2">
-                                            <span className="text-bold">Teléfono: </span> {dataSolicitud.phoneCliente}
-                                        </div>
-                                        <div className="mb-2">
-                                            <span className="text-bold">Marca Equipo:</span> {dataSolicitud.marca}
-                                        </div>
-                                        <div className="mb-2">
-                                            <span className="text-bold">Modelo Equipo:</span> {dataSolicitud.modelo}
-                                        </div>
-                                        <div className="mb-2">
-                                            <span className="text-bold">Serie Equipo:</span> {dataSolicitud.serie}
-                                        </div>
-                                        <div className="mb-2">
-                                            <span className="text-bold">Fecha de ingreso solicitud: </span> {moment(dataSolicitud.fechaCreacion).format("DD-MM-yyyy HH:mm")}
-                                        </div>
-                                        <div className="mb-2">
-                                            <span className="text-bold">Descripción: </span><br/>
-                                            {dataSolicitud.descripcion}
-                                        </div>
-                                        <a className="btn btn-primary" onClick={() => setShowModal(true)}>Ver direcciones del cliente</a>
-                                        
-                                        <ModalClientAddress show={showModal} onHide={() => setShowModal(false)} 
-                                                            idClient={dataSolicitud.idCliente} 
-                                                            updateAddress={updateAddress}/>
-
-                                    </Accordion.Body>
-                                </Accordion.Item>
-                            </Accordion>
+                            <AccordionDataRequest fullnameCliente={dataSolicitud.fullnameCliente} 
+                                                  emailCliente={dataSolicitud.emailCliente}
+                                                  phoneCliente={dataSolicitud.phoneCliente}
+                                                  marca={dataSolicitud.marca}
+                                                  modelo={dataSolicitud.modelo}
+                                                  serie={dataSolicitud.serie}
+                                                  fechaCreacion={dataSolicitud.fechaCreacion}
+                                                  descripcion={dataSolicitud.descripcion}
+                                                  region={dataSolicitud.region}
+                                                  comuna={dataSolicitud.comuna}
+                                                  calle={dataSolicitud.calle}/>
                         </div>
                         <div className="mb-3">
                             <label className="form-label">Tipo de actividad</label>
-                            <select className="form-select">
-                                <option defaultValue>Seleccione el tipo de actividad...</option>
-                                {
-                                    TipoActividad.map( (act) => (
-                                        <option value={act.value}>{act.label}</option>
-                                    ))
-                                }
-                            </select>
+                            <Select options={TipoActividad} styles={customStyleSelect} ref={actividad_ref}
+                                    placeholder={'Seleccione un horario...'} isSearchable={true} noOptionsMessage={() => 'Sin resultados'}
+                                />
                         </div>
                         <div className="mb-3">
                             <label className="form-label">Técnico</label>
-                            <Select options={technicals} styles={customStyleSelect} onChange={handleTechnicalAssigned}
+                            <Select options={technicals} styles={customStyleSelect} onChange={handleTechnicalAssigned} ref={tecnico_ref}
                                 placeholder={'Seleccione un tecnico para ver su agenda'} isSearchable={true} noOptionsMessage={() => 'Sin resultados'}
                             />
                         </div>
@@ -219,34 +227,18 @@ const CreateOTContent = ({technicals, dataSolicitud, regiones}) => {
                         </div>
                         <div className="col-12 col-md-6 mb-3">
                             <label className="form-label">Seleccione el día de la visita</label>
-                            <input type="date" maxLength="50" className="form-control field"  />
+                            <input type="date" maxLength="50" className="form-control field"  ref={diaVisita_ref}/>
                         </div>
                         <div className="col-12 col-md-6 mb-3">
                         <label className="form-label">Mañana/Tarde</label>
-                            <select className="form-select">
-                                <option defaultValue>Seleccione el horario...</option>
-                                <option value="1">Mañana</option>
-                                <option value="2">Tarde</option>
-                            </select>
-                        </div>
-
-                        <p className="mt-2 text-bold">Dirección</p><hr/>
-                        <div className="mb-3">
-                            <label className="form-label">Región</label>
-                            <Select options={regiones} styles={customStyleSelect} onChange={handleRegionChange}
-                                placeholder={'Seleccione una región...'} isSearchable={true} noOptionsMessage={() => 'Sin resultados'} ref={otRegion_ref}
-                            />
+                            <Select options={horarios} styles={customStyleSelect} ref={horario_ref}
+                                    placeholder={'Seleccione un horario...'} isSearchable={true} noOptionsMessage={() => 'Sin resultados'}
+                                />
                         </div>
                         <div className="mb-3">
-                            <label className="form-label">Comuna</label>
-                            <Select options={comunas} styles={customStyleSelect} noOptionsMessage={() => 'Sin resultados'} ref={otComuna_ref}
-                                placeholder={'Seleccione una comuna'} isSearchable={true} />
+                            <label className="form-label">Tiempo SLA</label>
+                            <input type="number" name="userName" maxLength="50" className="form-control field" ref={tiempoSLA_ref} />
                         </div>
-                        <div className="mb-3">
-                            <label className="form-label">Calle</label>
-                            <input type="text" maxLength="50" placeholder="ej: Calle 137" className="form-control field" ref={otCalle_ref}/>
-                        </div>
-
                         <div className="d-grid gap-2 mb-3 mt-4">
                             <button className="btn btn-primary">Generar OT</button>
                         </div>

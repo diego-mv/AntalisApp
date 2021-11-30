@@ -23,6 +23,7 @@ import NotFound from './components/layout_error/NotFound';
 import ManageTechnicals from './components/manage/technicals';
 import AllRequest from './components/ot_request/allRequests';
 import CreateOT from './components/ot/createOT';
+import ViewOT from './components/ot/ViewOT';
 
 
 
@@ -53,6 +54,7 @@ function App() {
         <Route exact path="/otrequest/create" component={CreateRequest} />
         {/* OT */}
         <Route exact path="/ot/create/:idrequest" component={CreateOT} />
+        <Route exact path="/ot/view/:id" component={ViewOT} />
 
         <Route component={NotFound} />
       </Switch>

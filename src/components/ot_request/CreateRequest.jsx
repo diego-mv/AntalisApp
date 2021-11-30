@@ -11,33 +11,53 @@ import ButtonBack from "../layout/ButtonBack";
 
 const CreateRequest = () => {
     const [loading, setLoading] = useState(true);
+    const [regiones, setRegiones] = useState([]);
     const [equipmentUser, setEquipmentUser] = useState([]);
 
     useEffect(() => {
         Backend.get('/OrdenTrabajo/GetMyEquipos', {})
-        .then( equipment => {
-            setEquipmentUser(equipment.data.data.map(e => {
-                return {
-                    value: e.id,
-                    label: "Marca: "+e.marca+" | Modelo: "+e.modelo+" | Serie: "+e.serie,
-                }
-            }));
-            setLoading(false);
-        })
-        .catch(err => {
-            console.log(err);
-            setLoading(false);
-        });
+            .then( equipment => {
+                setEquipmentUser(equipment.data.data.map(e => {
+                    return {
+                        value: e.id,
+                        label: "Marca: "+e.marca+" | Modelo: "+e.modelo+" | Serie: "+e.serie,
+                    }
+                }));
+            })
+            .catch(err => {
+                console.log(err);
+                setLoading(false);
+            });
+        Backend.get('/Ubicacion/Regiones', {})
+            .then(res => {
+                setRegiones(res.data.map(region => {
+                    return {
+                        value: region.id,
+                        label: region.name
+                    }
+                }));
+                setLoading(false);
+            })
+            .catch(err => {
+                console.log(err);
+                setLoading(false);
+            });
+        
+        setLoading(false);
     }, []);
 
-    return loading ? <LoadingContent /> : <Layout content={<CreateRequestForm equipmentUser={equipmentUser} />} />;
+    return loading ? <LoadingContent /> : <Layout content={<CreateRequestForm equipmentUser={equipmentUser} regiones={regiones}/>} />;
 }
 
-const CreateRequestForm = ({ equipmentUser }) => {
+const CreateRequestForm = ({ equipmentUser , regiones}) => {
+    const [comunas, setComunas] = useState([]);
+    const [alert, setAlert] = useState(null);
+
     const description_ref = useRef();
     const equipmentId_ref = useRef();
-
-    const [alert, setAlert] = useState(null);
+    const region_ref = useRef();
+    const comuna_ref = useRef();
+    const calle_ref = useRef();
 
     const trimFields = () => {
         document.querySelectorAll('.field').forEach(elem => {
@@ -45,24 +65,65 @@ const CreateRequestForm = ({ equipmentUser }) => {
         });
     }
 
+    const handleRegionChange = (event) => {
+        setComunas([]);
+        comuna_ref.current.clearValue();
+        Backend.get('/Ubicacion/Comunas', {
+            params: {
+                IdRegion: event.value
+            }
+        })
+        .then(res => {
+            setComunas(res.data.map(comuna => {
+                return {
+                    value: comuna.id,
+                    label: comuna.name
+                }
+            }));
+            
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    }
+
     const submitRequest = (event) => {
         event.preventDefault();
         trimFields();
 
-        
         let alert_required = false;
 
-        let role = equipmentId_ref.current.getValue();
-        const role_control = equipmentId_ref.current.controlRef;
-        if(role_control) { role_control.classList.remove('required-field'); }
-        if(!role.length) {
+        let equipment = equipmentId_ref.current.getValue();
+        const equipment_control = equipmentId_ref.current.controlRef;
+        if(equipment_control) { equipment_control.classList.remove('required-field'); }
+        if(!equipment.length) {
             alert_required = true;
-            if(role_control) { role_control.classList.add('required-field'); }
+            if(equipment_control) { equipment_control.classList.add('required-field'); }
         } else {
-            role = role[0].role;
+            equipment = equipment[0].equipment;
         }
 
-        const required_fields = [description_ref];
+        let region = region_ref.current.getValue();
+        const region_control = region_ref.current.controlRef;
+        if(region_control) { region_control.classList.remove('required-field'); }
+        if(!region.length) {
+            alert_required = true;
+            if(region_control) { region_control.classList.add('required-field'); }
+        } else {
+            region = region[0].region;
+        }
+
+        let comuna = comuna_ref.current.getValue();
+        const comuna_control = comuna_ref.current.controlRef;
+        if(comuna_control) { comuna_control.classList.remove('required-field'); }
+        if(!comuna.length) {
+            alert_required = true;
+            if(comuna_control) { comuna_control.classList.add('required-field'); }
+        } else {
+            comuna = comuna[0].comuna;
+        }
+
+        const required_fields = [description_ref, calle_ref];
         required_fields.map(field => {
             field.current.classList.remove('required-field');
             if(!field.current.value) {
@@ -84,10 +145,15 @@ const CreateRequestForm = ({ equipmentUser }) => {
 
         Backend.post('/OrdenTrabajo/CreateSolicitud', {
             descripcion: description_ref.current.value,
-            equipoId: equipmentId_ref.current.getValue()[0].value
+            equipoId: equipmentId_ref.current.getValue()[0].value,
+            regionId: region_ref.current.getValue()[0].value,
+            comunaId: comuna_ref.current.getValue()[0].value,
+            calle: calle_ref.current.value
         })
         .then(res => {
             description_ref.current.value = ""
+            calle_ref.current.value = ""
+            comuna_ref.current.clearValue();
 
             setAlert(<OverlayAlert
                 variant="success"
@@ -126,6 +192,22 @@ const CreateRequestForm = ({ equipmentUser }) => {
                         <Select options={equipmentUser} styles={customStyleSelect}  ref={equipmentId_ref}
                             placeholder={'Seleccione...'} isSearchable={true} noOptionsMessage={() => 'Sin resultados'}
                         />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Región</label>
+                        <Select options={regiones} styles={customStyleSelect} onChange={handleRegionChange}
+                            placeholder={'Seleccione una región...'} isSearchable={true} noOptionsMessage={() => 'Sin resultados'} ref={region_ref}
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Comuna</label>
+                        <Select options={comunas} styles={customStyleSelect}
+                            placeholder={'Seleccione una región...'} isSearchable={true} noOptionsMessage={() => 'Sin resultados'} ref={comuna_ref}
+                        />
+                    </div>
+                    <div className="mb-3">
+                        <label className="form-label">Calle</label>
+                        <input type="text" name="userName" maxLength="50" className="form-control field" ref={calle_ref} placeholder="ej: Calle 001"/>
                     </div>
                     <div className="form-group mb-4">
                         <label className="mb-3" htmlFor="description">Descripción</label>

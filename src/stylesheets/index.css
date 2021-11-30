@@ -269,3 +269,26 @@ main {
   margin-top: 0px;
   margin-bottom: 25px;
 }
+
+
+.comment-name-another{
+  padding-left: 1rem;
+  font-size: 1.1rem;
+}
+
+.comment-time-another{
+  padding-right: 1rem;
+  text-align: end;
+}
+
+.comment-my-name{
+  padding-right: 1rem;
+  font-size: 1.1rem;
+  text-align: end;
+}
+
+.comment-my-time{
+  padding-left: 1rem;
+  text-align: start;
+}
+

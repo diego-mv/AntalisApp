@@ -154,8 +154,6 @@ const ListRequest = ({ url }) => {
                         </div>
                         <div className="text-muted dates-request" >
                             Fecha de creación: {moment(request.fechaCreacion).format("DD-MM-yyyy HH:mm")} 
-                            <br/>
-                            Última actualización: {moment(request.fechaCreacion).fromNow()} 
                         </div>
                         <Link className="btn btn-primary float-btn-request text-bold" to={"/ot/create/"+request.id}>Atender</Link>
                     </div>

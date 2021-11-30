@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import Backend from "../../backend";
 import OverlayAlertOnLoad from "../../layout/utils/overlay_alert_onload";
 import OverlayAlert from "../../layout/utils/overlay_alert";
+import { Link } from "react-router-dom";
 
 const ListRequestClient = ({ url , parameters}) => {
     const [requests, setRequests] = useState([]);
@@ -80,10 +81,9 @@ const ListRequestClient = ({ url , parameters}) => {
 
                         <div className="text-muted dates-request" >
                             Fecha de creación: {moment(request.fechaCreacion).format("DD-MM-yyyy HH:mm")} 
-                            <br/>
-                            Última actualización: {moment(request.fechaCreacion).fromNow()} 
                         </div>
-                        <button className="btn btn-primary float-btn-request">Abrir</button>
+
+                        <Link className="btn btn-primary float-btn-request" to={request.estadoId === "79b12fb2-f9ff-4a7a-ba4a-0da48637442f" ? `/otrequest/view/${request.id}` : `/ot/view/${request.id}`}>Abrir</Link>
                     </div>
                 </div>    
             
