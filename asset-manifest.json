@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/AntalisApp/static/css/main.b1a02ebb.chunk.css",
+    "main.js": "/AntalisApp/static/js/main.cdd76a76.chunk.js",
+    "main.js.map": "/AntalisApp/static/js/main.cdd76a76.chunk.js.map",
+    "runtime-main.js": "/AntalisApp/static/js/runtime-main.51fda2dd.js",
+    "runtime-main.js.map": "/AntalisApp/static/js/runtime-main.51fda2dd.js.map",
+    "static/css/2.9aaf2cf1.chunk.css": "/AntalisApp/static/css/2.9aaf2cf1.chunk.css",
+    "static/js/2.91bc940e.chunk.js": "/AntalisApp/static/js/2.91bc940e.chunk.js",
+    "static/js/2.91bc940e.chunk.js.map": "/AntalisApp/static/js/2.91bc940e.chunk.js.map",
+    "index.html": "/AntalisApp/index.html",
+    "static/css/2.9aaf2cf1.chunk.css.map": "/AntalisApp/static/css/2.9aaf2cf1.chunk.css.map",
+    "static/css/main.b1a02ebb.chunk.css.map": "/AntalisApp/static/css/main.b1a02ebb.chunk.css.map",
+    "static/js/2.91bc940e.chunk.js.LICENSE.txt": "/AntalisApp/static/js/2.91bc940e.chunk.js.LICENSE.txt",
+    "static/media/antalis-brand-white.e5a6ef48.png": "/AntalisApp/static/media/antalis-brand-white.e5a6ef48.png",
+    "static/media/antalis-logo-white.49c93409.png": "/AntalisApp/static/media/antalis-logo-white.49c93409.png",
+    "static/media/antalis-logo.b6bd2baa.png": "/AntalisApp/static/media/antalis-logo.b6bd2baa.png",
+    "static/media/user-icon-secondary.72089ac2.svg": "/AntalisApp/static/media/user-icon-secondary.72089ac2.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.51fda2dd.js",
+    "static/css/2.9aaf2cf1.chunk.css",
+    "static/js/2.91bc940e.chunk.js",
+    "static/css/main.b1a02ebb.chunk.css",
+    "static/js/main.cdd76a76.chunk.js"
+  ]
+}
